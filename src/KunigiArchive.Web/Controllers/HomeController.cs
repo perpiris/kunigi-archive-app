@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KunigiArchive.Web.Controllers;
@@ -10,6 +11,7 @@ public class HomeController : Controller
     }
     
     [HttpGet("dashboard")]
+    [Authorize(Roles = "Admin,Manager")]
     public IActionResult Dashboard()
     {
         return View();

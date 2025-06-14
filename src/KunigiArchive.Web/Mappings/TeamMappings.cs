@@ -7,7 +7,7 @@ namespace KunigiArchive.Web.Mappings;
 
 public static class TeamMappings
 {
-    public static TeamDetailsViewModel ToDetailsViewModel(this TeamDetailsResponse response)
+    public static TeamDetailsViewModel MapToDetailsViewModel(this TeamDetailsResponse response)
     {
         return new TeamDetailsViewModel
         {
@@ -18,14 +18,19 @@ public static class TeamMappings
         };
     }
     
-    public static PaginatedViewModel<TeamDetailsViewModel> ToPaginatedViewModel(this PaginatedResponse<TeamDetailsResponse> paginatedResponse)
+    public static PaginatedViewModel<TeamDetailsViewModel> MapToPaginatedViewModel(this PaginatedResponse<TeamDetailsResponse> paginatedResponse)
     {
         return new PaginatedViewModel<TeamDetailsViewModel>
         {
-            Items = paginatedResponse.Items.Select(x => x.ToDetailsViewModel()).ToList(),
+            Items = paginatedResponse.Items.Select(x => x.MapToDetailsViewModel()).ToList(),
             CurrentPage = paginatedResponse.CurrentPage,
             PageSize = paginatedResponse.PageSize,
             TotalPages = paginatedResponse.TotalPages
         };
+    }
+
+    public static TeamCreateRequest ToCreateRequest(this TeamCreateViewModel viewModel)
+    {
+        return new TeamCreateRequest(viewModel.Name, viewModel.IsActive);
     }
 }

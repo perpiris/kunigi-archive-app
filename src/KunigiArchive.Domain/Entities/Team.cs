@@ -23,4 +23,6 @@ public class Team
     public string YoutubeLink { get; set; } = string.Empty;
     
     public string WebsiteLink { get; set; } = string.Empty;
+    
+    public ICollection<TeamManager> Managers { get; set; } = new List<TeamManager>();
 }

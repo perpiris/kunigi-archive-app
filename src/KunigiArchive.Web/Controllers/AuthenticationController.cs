@@ -38,12 +38,6 @@ public class AuthenticationController : Controller
         var user = await _userManager.FindByEmailAsync(model.Email);
         if (user != null)
         {
-            if (!user.IsApproved)
-            {
-                TempData["info-alert"] = "Ο λογαριασμός σας αναμένει έγκριση από διαχειριστή.";
-                return View(model);
-            }
-
             if (await _userManager.IsLockedOutAsync(user))
             {
                 TempData["warning-alert"] = "Ο λογαριασμός είναι κλειδωμένος.";

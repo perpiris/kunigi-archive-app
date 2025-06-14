@@ -80,6 +80,8 @@ using (var scope = app.Services.CreateScope())
         context.Database.Migrate();
         Log.Information("Database migrated");
     }
+    
+    await DataSeed.Seed(app.Services);
 }
 
 app.Run();

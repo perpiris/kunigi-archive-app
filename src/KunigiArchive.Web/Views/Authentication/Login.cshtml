@@ -1,0 +1,40 @@
+﻿@model LoginViewModel
+
+@{
+    ViewData["Title"] = "Σύνδεση";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        <div class="card mt-5">
+            <div class="card-body p-4">
+                <h3 class="text-center">Σύνδεση</h3>
+                <form asp-action="Login" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger text-center mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control"/>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label"></label>
+                        <input asp-for="Password" class="form-control" type="password"/>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid mt-3">
+                        <button type="submit" class="btn btn-primary">Σύνδεση</button>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        @* <a asp-action="ForgotPassword" class="text-decoration-none">Ξεχάσατε τον κωδικό σας;</a> *@
+                        <br/>
+                        <a asp-action="Register" class="text-decoration-none">Εγγραφή για διαχειριστές ομάδων</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

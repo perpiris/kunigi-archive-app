@@ -1,31 +1,32 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using KunigiArchive.Web.Models;
 
 namespace KunigiArchive.Web.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
-    {
-        _logger = logger;
-    }
-
     public IActionResult Index()
     {
         return View();
     }
-
-    public IActionResult Privacy()
+    
+    [HttpGet("error")]
+    public IActionResult Error()
     {
+        Response.StatusCode = StatusCodes.Status500InternalServerError;
         return View();
     }
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
+    [HttpGet("not-found")]
+    public new IActionResult NotFound()
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        Response.StatusCode = StatusCodes.Status404NotFound;
+        return View();
+    }
+    
+    [HttpGet("access-denied")]
+    public IActionResult AccessDenied()
+    {
+        Response.StatusCode = StatusCodes.Status403Forbidden;
+        return View();
     }
 }

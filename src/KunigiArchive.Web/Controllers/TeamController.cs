@@ -105,7 +105,7 @@ public class TeamController : Controller
             return View(viewModel);
         }
 
-        var result = await _teamService.CreateTeamAsync(viewModel.ToCreateRequest(), ModelState);
+        var result = await _teamService.CreateTeamAsync(viewModel.MapToCreateRequest(), ModelState);
         if (!result.IsSuccess)
         {
             return View(viewModel);
@@ -113,5 +113,60 @@ public class TeamController : Controller
 
         TempData["success-alert"] = "Η ομάδα δημιουργήθηκε επιτυχώς.";
         return RedirectToAction(nameof(Manage));
+    }
+    
+    [HttpGet("{idOrSlug}/edit")]
+    [Authorize(Roles = "Admin,Manager")]
+    public async Task<IActionResult> Edit(string idOrSlug)
+    {
+        var data = await _teamService.GetTeamByIdOrSlugAsync(idOrSlug, false);
+        if (data is null)
+        {
+            TempData["error-alert"] = "Η ομάδα εδεν βρέθηκε.";
+            return RedirectToAction("NotFound", "Home");
+        }
+
+        var userId = long.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        if (!User.IsInRole("Admin") && !await _teamService.CanUserAccessTeam(userId, idOrSlug))
+        {
+            TempData["warning-alert"] = "Δεν έχετε δικαίωμα επεξεργασίας αυτής της ομάδας.";
+            return RedirectToAction("Dashboard", "Home");
+        }
+
+        var viewModel = data.MapToEditViewModel();
+        return View(viewModel);
+    }
+
+    [HttpPost("{idOrSlug}/edit")]
+    [Authorize(Roles = "Admin,Manager")]
+    public async Task<IActionResult> Edit(string idOrSlug, TeamEditViewModel viewModel, IFormFile? image)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(viewModel);
+        }
+
+        if (string.IsNullOrEmpty(idOrSlug))
+        {
+            TempData["error-alert"] = "Η ομάδα εδεν βρέθηκε.";
+            return RedirectToAction("NotFound", "Home");
+        }
+
+        var userId = long.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        if (!User.IsInRole("Admin") && !await _teamService.CanUserAccessTeam(userId, idOrSlug))
+        {
+            TempData["warning-alert"] = "Δεν έχετε δικαίωμα επεξεργασίας αυτής της ομάδας.";
+            return RedirectToAction("Dashboard", "Home");
+        }
+
+        var result = await _teamService.EditTeamAsync(viewModel.MapToEditRequest(), image, ModelState);
+        if (!result.IsSuccess)
+        {
+            TempData["error-alert"] = result.ErrorMessage;
+            return View(viewModel);
+        }
+
+        TempData["success-alert"] = "Η ομάδα επεξεργάστηκε επιτυχώς.";
+        return RedirectToAction(nameof(Actions), new { idOrSlug });
     }
 }

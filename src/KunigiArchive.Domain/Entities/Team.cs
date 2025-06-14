@@ -7,22 +7,22 @@ public class Team
     public required string Name { get; set; }
     
     public required string Slug { get; set; }
-    
+
     public bool IsActive { get; set; }
-    
-    public bool IsArchived { get; set; }
+
+    public bool IsArchived { get; set; } = true;
     
     public short? YearFounded { get; set; }
 
-    public string Description { get; set; } = string.Empty;
+    public string? Description { get; set; }
     
-    public string FacebookLink { get; set; } = string.Empty;
+    public string? FacebookLink { get; set; }
     
-    public string InstagramLink { get; set; } = string.Empty;
+    public string? InstagramLink { get; set; }
     
-    public string YoutubeLink { get; set; } = string.Empty;
+    public string? YoutubeLink { get; set; }
     
-    public string WebsiteLink { get; set; } = string.Empty;
+    public string? WebsiteLink { get; set; }
     
     public ICollection<TeamManager> Managers { get; set; } = new List<TeamManager>();
 }

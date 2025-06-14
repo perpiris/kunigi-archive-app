@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KunigiArchive.Application.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250614141218_Initial")]
+    [Migration("20250614181949_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -69,17 +69,11 @@ namespace KunigiArchive.Application.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
                     b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("IsApproved")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("LockoutEnabled")
@@ -125,6 +119,76 @@ namespace KunigiArchive.Application.Data.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("KunigiArchive.Domain.Entities.Team", b =>
+                {
+                    b.Property<long>("TeamId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("TeamId"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<string>("FacebookLink")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("InstagramLink")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .UseCollation("el-GR-x-icu");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("WebsiteLink")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<short?>("YearFounded")
+                        .HasColumnType("smallint");
+
+                    b.Property<string>("YoutubeLink")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.HasKey("TeamId");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
+
+                    b.ToTable("Teams");
+                });
+
+            modelBuilder.Entity("KunigiArchive.Domain.Entities.TeamManager", b =>
+                {
+                    b.Property<long>("TeamId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ApplicationUserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("TeamId", "ApplicationUserId");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.ToTable("TeamManagers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
@@ -230,6 +294,25 @@ namespace KunigiArchive.Application.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("KunigiArchive.Domain.Entities.TeamManager", b =>
+                {
+                    b.HasOne("KunigiArchive.Domain.Entities.ApplicationUser", "ApplicationUser")
+                        .WithMany("ManagedTeams")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("KunigiArchive.Domain.Entities.Team", "Team")
+                        .WithMany("Managers")
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Team");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
                 {
                     b.HasOne("KunigiArchive.Domain.Entities.ApplicationRole", null)
@@ -279,6 +362,16 @@ namespace KunigiArchive.Application.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("KunigiArchive.Domain.Entities.ApplicationUser", b =>
+                {
+                    b.Navigation("ManagedTeams");
+                });
+
+            modelBuilder.Entity("KunigiArchive.Domain.Entities.Team", b =>
+                {
+                    b.Navigation("Managers");
                 });
 #pragma warning restore 612, 618
         }

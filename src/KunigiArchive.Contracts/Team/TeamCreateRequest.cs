@@ -1,3 +1,5 @@
 ﻿namespace KunigiArchive.Contracts.Team;
 
-public record TeamCreateRequest(string Name, bool IsActive);
+public record TeamCreateRequest(
+    string Name, 
+    bool IsActive);

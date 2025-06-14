@@ -40,7 +40,7 @@ public class AuthenticationController : Controller
         {
             if (await _userManager.IsLockedOutAsync(user))
             {
-                TempData["warning-alert"] = "Ο λογαριασμός είναι κλειδωμένος.";
+                ModelState.AddModelError("Email", "Ο λογαριασμός είναι κλειδωμένος.");
                 return View(model);
             }
         }
@@ -53,6 +53,7 @@ public class AuthenticationController : Controller
             return RedirectToAction("Index", "Home");
         }
 
+        ModelState.AddModelError("Email", "Το email ή ο κωδικός δεν ταιριάζουν");
         return View(model);
     }
 

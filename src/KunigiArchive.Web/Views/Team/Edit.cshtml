@@ -1,0 +1,152 @@
+﻿@model TeamEditViewModel
+
+@{
+    ViewData["Title"] = "Επεξεργασία ομάδας";
+    ViewData["Banner"] = Model.Name;
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form asp-action="Edit" asp-controller="Team" asp-route-idOrSlug="@Model.Slug" enctype="multipart/form-data" autocomplete="off">
+                    <input type="hidden" asp-for="Name" />
+                    <input type="hidden" asp-for="TeamId" />
+                    <input type="hidden" asp-for="Slug" />
+
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="mb-4">
+                                <h5 class="text-primary border-bottom pb-2 mb-3">Βασικές Πληροφορίες</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label asp-for="YearFounded" class="form-label"></label>
+                                            <input asp-for="YearFounded" class="form-control" type="number" />
+                                            <span asp-validation-for="YearFounded" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Κατάσταση</label>
+                                            <div class="d-flex gap-4 mt-2">
+                                                <div class="form-check form-switch">
+                                                    <input asp-for="IsActive" class="form-check-input" type="checkbox" />
+                                                    <label class="form-check-label" asp-for="IsActive"></label>
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <input asp-for="IsArchived" class="form-check-input" type="checkbox" />
+                                                    <label class="form-check-label" asp-for="IsArchived"></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h5 class="text-primary border-bottom pb-2 mb-3">Περιγραφή</h5>
+                                <div class="mb-3">
+                                    <label asp-for="Description" class="form-label"></label>
+                                    <textarea asp-for="Description" id="description-input" class="form-control" rows="4" style="display: none;"></textarea>
+                                    <div id="description-editor" class="form-control" style="height: 200px;"></div>
+                                    <span asp-validation-for="Description" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h5 class="text-primary border-bottom pb-2 mb-3">Κοινωνικά Δίκτυα & Ιστοσελίδα</h5>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label asp-for="WebsiteLink" class="form-label"></label>
+                                            <input asp-for="WebsiteLink" class="form-control" />
+                                            <span asp-validation-for="WebsiteLink" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label asp-for="FacebookLink" class="form-label"></label>
+                                            <input asp-for="FacebookLink" class="form-control" />
+                                            <span asp-validation-for="FacebookLink" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label asp-for="InstagramLink" class="form-label"></label>
+                                            <input asp-for="InstagramLink" class="form-control" />
+                                            <span asp-validation-for="InstagramLink" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label asp-for="YoutubeLink" class="form-label"></label>
+                                            <input asp-for="YoutubeLink" class="form-control" />
+                                            <span asp-validation-for="YoutubeLink" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-lg-4">
+                            <div class="position-sticky" style="top: 20px;">
+                                <div class="mb-4">
+                                    <h5 class="text-primary border-bottom pb-2 mb-3">Φωτογραφία</h5>
+                                    <div class="mb-3">
+                                        <label asp-for="Image" class="form-label"></label>
+                                        <input type="file" name="image" class="form-control mb-2" accept="image/png, image/jpeg"/>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary">Αποθήκευση</button>
+                                    <a asp-action="Actions" asp-route-idOrSlug="@Model.Slug" class="btn btn-secondary">Πίσω</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function() {
+            let quill = new Quill('#description-editor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline', 'strike'],
+                        ['blockquote', 'code-block'],
+                        [{ 'header': 1 }, { 'header': 2 }],
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                        [{ 'indent': '-1' }, { 'indent': '+1' }],
+                        [{ 'direction': 'rtl' }],
+                        [{ 'size': ['small', false, 'large', 'huge'] }],
+                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'align': [] }],
+                        ['clean'],
+                        ['link', 'image', 'video']
+                    ]
+                }
+            });
+
+            let initialContent = $("#description-input").val();
+            if (initialContent) {
+                quill.root.innerHTML = initialContent;
+            }
+
+            $("form").on("submit", function() {
+                let htmlContent = quill.root.innerHTML;
+                $("#description-input").val(htmlContent);
+                console.log("Form submitted with description:", htmlContent);
+                return true;
+            });
+        });
+    </script>
+}

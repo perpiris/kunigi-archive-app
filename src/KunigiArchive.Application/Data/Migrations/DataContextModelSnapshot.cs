@@ -127,17 +127,14 @@ namespace KunigiArchive.Application.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("TeamId"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(4000)
                         .HasColumnType("character varying(4000)");
 
                     b.Property<string>("FacebookLink")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
                     b.Property<string>("InstagramLink")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
@@ -158,7 +155,6 @@ namespace KunigiArchive.Application.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("WebsiteLink")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
@@ -166,7 +162,6 @@ namespace KunigiArchive.Application.Data.Migrations
                         .HasColumnType("smallint");
 
                     b.Property<string>("YoutubeLink")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 

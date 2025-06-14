@@ -5,6 +5,7 @@ using KunigiArchive.Application.Utilities;
 using KunigiArchive.Contracts.Common;
 using KunigiArchive.Contracts.Team;
 using KunigiArchive.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -84,7 +85,40 @@ public class TeamService : ITeamService
         
         return ServiceResult.Success();
     }
-    
+
+    public async Task<ServiceResult> EditTeamAsync(TeamEditRequest request, IFormFile? image, ModelStateDictionary modelState)
+    {
+        var team = await _context.Teams.FirstOrDefaultAsync(x => x.Slug == request.Slug);
+
+        if (team is null)
+        {
+            return ServiceResult.Failure("Η ομάδα δεν βρέθηκε");
+        }
+        
+        team.IsActive = request.IsActive;
+        team.IsArchived = request.IsArchived;
+        team.YearFounded = request.YearFounded;
+        team.Description = request.Description;
+        team.FacebookLink = request.FacebookLink;
+        team.InstagramLink = request.InstagramLink;
+        team.YoutubeLink = request.YoutubeLink;
+        team.WebsiteLink = request.WebsiteLink;
+
+        if (image is not null)
+        {
+            // var result = await _fileService.SaveFileAsync(image, $"teams/{team.Slug}");
+            // if (result.IsSuccess)
+            // {
+            //     team.ProfileImagePath = result.Data;
+            // }
+        }
+        
+        _context.Teams.Update(team);
+        await _context.SaveChangesAsync();
+        
+        return ServiceResult.Success();
+    }
+
     public async Task<bool> CanUserAccessTeam(long userId, string idOrSlug)
     {
         Team? team;

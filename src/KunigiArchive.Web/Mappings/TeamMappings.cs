@@ -14,6 +14,25 @@ public static class TeamMappings
             TeamId = response.TeamId,
             Name = response.Name,
             Slug = response.Slug,
+            IsActive = response.IsActive,
+            IsArchived = response.IsArchived,
+            YearFounded = response.YearFounded,
+            Description = response.Description,
+            FacebookLink = response.FacebookLink,
+            InstagramLink = response.InstagramLink,
+            YoutubeLink = response.YoutubeLink,
+            WebsiteLink = response.WebsiteLink,
+        };
+    }
+
+    public static TeamEditViewModel MapToEditViewModel(this TeamDetailsResponse response)
+    {
+        return new TeamEditViewModel
+        {
+            TeamId = response.TeamId,
+            Name = response.Name,
+            Slug = response.Slug,
+            IsActive = response.IsActive,
             IsArchived = response.IsArchived,
         };
     }
@@ -29,8 +48,24 @@ public static class TeamMappings
         };
     }
 
-    public static TeamCreateRequest ToCreateRequest(this TeamCreateViewModel viewModel)
+    public static TeamCreateRequest MapToCreateRequest(this TeamCreateViewModel viewModel)
     {
-        return new TeamCreateRequest(viewModel.Name, viewModel.IsActive);
+        return new TeamCreateRequest(
+            viewModel.Name, 
+            viewModel.IsActive);
+    }
+    
+    public static TeamEditRequest MapToEditRequest(this TeamEditViewModel viewModel)
+    {
+        return new TeamEditRequest(
+            viewModel.Slug, 
+            viewModel.IsActive, 
+            viewModel.IsArchived, 
+            viewModel.YearFounded, 
+            viewModel.Description, 
+            viewModel.FacebookLink, 
+            viewModel.InstagramLink, 
+            viewModel.YoutubeLink,  
+            viewModel.WebsiteLink);
     }
 }

@@ -12,6 +12,7 @@ public static class TeamMappings
             TeamId = team.TeamId,
             Name = team.Name,
             Slug = team.Slug,
+            IsActive = team.IsActive,
             IsArchived =  team.IsArchived,
         };
 

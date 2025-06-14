@@ -1,4 +1,5 @@
 ﻿using KunigiArchive.Application.Services;
+using KunigiArchive.Web.ViewModels.UserManagement;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,4 +27,29 @@ public class UserManagementController : Controller
         
         return View();
     }
+    
+    [HttpGet("create")]
+    public IActionResult CreateUser()
+    {
+        var viewModel = new UserCreateViewModel();
+        return View(viewModel);
+    }
+    
+    // [HttpPost("create")]
+    // public async Task<IActionResult> CreateUser(UserCreateViewModel viewModel)
+    // {
+    //     if (!ModelState.IsValid)
+    //     {
+    //         return View(viewModel);
+    //     }
+    //     
+    //     var result = await _accountService.CreateUserAsync(viewModel.ToCreateRequest(), ModelState);
+    //     if (!result.IsSuccess)
+    //     {
+    //         return View(viewModel);
+    //     }
+    //     
+    //     TempData["success-alert"] = "Ο χρήστης δημιουργήθηκε επιτυχώς.";
+    //     return RedirectToAction(nameof(Index));
+    // }
 }

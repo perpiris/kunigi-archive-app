@@ -1,0 +1,72 @@
+﻿@model PaginatedViewModel<TeamDetailsViewModel>
+
+@{
+    ViewData["Title"] = "Διαχείριση Ομάδων";
+    ViewData["Banner"] = "Διαχείριση Ομάδων";
+    
+    var sortBy = ViewBag.SortBy ?? "name";
+    var ascending = ViewBag.Ascending ?? true;
+}
+
+<div class="mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="@Url.Action("Create", "Team")" class="btn btn-primary">Νέα Ομάδα</a>
+        @if (Model.Items.Any())
+        {
+            <a class="btn btn-primary"
+               asp-controller="Team"
+               asp-action="Manage"
+               asp-route-pageNumber="@Model.CurrentPage"
+               asp-route-pageSize="@Model.PageSize"
+               asp-route-sortBy="name"
+               asp-route-ascending="@(!ascending)">
+                Αλφαβητικά <i class="bi @(ascending ? "bi-sort-up" : "bi-sort-down")"></i>
+            </a>
+        }
+    </div>
+
+    <div class="list-group">
+        @foreach (var team in Model.Items)
+        {
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    @if (!team.IsArchived)
+                    {
+                        <i class="bi bi-eye-fill text-success me-2"></i>
+                    }
+                    else
+                    {
+                        <i class="bi bi-eye-slash-fill text-danger me-2"></i>
+                    }
+                    <span>@team.Name</span>
+                </div>
+                <a asp-controller="Team" asp-action="Actions" asp-route-idOrSlug="@team.Slug" class="btn btn-secondary btn-sm">Ενέργειες</a>
+            </div>
+        }
+    </div>
+
+    @if (!Model.Items.Any())
+    {
+        <p class="text-center text-muted mt-4">Δεν βρέθηκαν αποτελέσματα.</p>
+    }
+</div>
+
+@if (Model.TotalPages > 1)
+{
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            @for (var i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" 
+                       asp-controller="Team" 
+                       asp-action="Manage" 
+                       asp-route-pageNumber="@i" 
+                       asp-route-pageSize="@Model.PageSize"
+                       asp-route-sortBy="@sortBy"
+                       asp-route-ascending="@ascending">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

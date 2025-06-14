@@ -9,6 +9,12 @@ public class HomeController : Controller
         return View();
     }
     
+    [HttpGet("dashboard")]
+    public IActionResult Dashboard()
+    {
+        return View();
+    }
+    
     [HttpGet("error")]
     public IActionResult Error()
     {

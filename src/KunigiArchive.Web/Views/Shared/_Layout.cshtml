@@ -26,6 +26,15 @@
                     <li class="nav-item">
                         <a class="nav-link @IsActive("Home", "Index")" asp-controller="Home" asp-action="Index">Αρχική</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link @IsActive("Team", "Index")" asp-controller="Team" asp-action="Index">Ομάδες</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(IsActive("Home", "Dashboard"))"
+                           asp-controller="Home" asp-action="Dashboard">
+                            Διαχείριση
+                        </a>
+                    </li>
                 </ul>
                 <ul class="navbar-nav">
                     @if (User.Identity is { IsAuthenticated: true })

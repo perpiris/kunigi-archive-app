@@ -68,45 +68,4 @@ public class AuthenticationController : Controller
         await _signInManager.SignOutAsync();
         return RedirectToAction("Index", "Home");
     }
-
-    [HttpGet("register")]
-    public IActionResult Register()
-    {
-        if (User.Identity is { IsAuthenticated: true })
-        {
-            return RedirectToAction("Index", "Home");
-        }
-
-        return View();
-    }
-
-    [HttpPost("register")]
-    public async Task<IActionResult> Register(RegisterViewModel model)
-    {
-        if (User.Identity is { IsAuthenticated: true })
-        {
-            return RedirectToAction("Index", "Home");
-        }
-
-        if (!ModelState.IsValid) return View(model);
-
-        var user = new ApplicationUser { UserName = model.Email, Email = model.Email, IsApproved = true };
-        var result = await _userManager.CreateAsync(user, model.Password);
-
-        if (result.Succeeded)
-        {
-            // await _userManager.SetLockoutEnabledAsync(user, true);
-            // await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
-
-            TempData["success-alert"] = "Ο λογαριασμός δημιουργήθηκε και αναμένει έγκριση από διαχειριστή.";
-            return RedirectToAction("Index", "Home");
-        }
-
-        foreach (var error in result.Errors)
-        {
-            ModelState.AddModelError("", error.Description);
-        }
-
-        return View(model);
-    }
 }

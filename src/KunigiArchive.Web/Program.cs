@@ -1,4 +1,6 @@
 using KunigiArchive.Application.Data;
+using KunigiArchive.Application.Services;
+using KunigiArchive.Application.Services.Implementation;
 using KunigiArchive.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +48,9 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/";
     options.LoginPath = "/login";
 });
+
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ITeamService, TeamService>();
 
 var app = builder.Build();
 

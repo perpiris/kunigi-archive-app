@@ -50,6 +50,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
 
 var app = builder.Build();
@@ -61,6 +62,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseStatusCodePagesWithRedirects("/not-found");
 app.UseSerilogRequestLogging();
 app.UseRouting();

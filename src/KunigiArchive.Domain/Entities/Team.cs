@@ -24,5 +24,7 @@ public class Team
     
     public string? WebsiteLink { get; set; }
     
+    public string? LogoLink { get; set; }
+    
     public ICollection<TeamManager> Managers { get; set; } = new List<TeamManager>();
 }

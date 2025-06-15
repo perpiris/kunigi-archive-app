@@ -16,14 +16,17 @@ public class TeamService : ITeamService
 {
     private readonly DataContext _context;
     private readonly ILogger<TeamService> _logger;
+    private readonly IFileService _fileService;
 
-    public TeamService(DataContext context, ILogger<TeamService> logger)
+    public TeamService(DataContext context, ILogger<TeamService> logger, IFileService fileService)
     {
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(fileService);
 
         _context = context;
         _logger = logger;
+        _fileService = fileService;
     }
 
     public async Task<PaginatedResponse<TeamDetailsResponse>> GetPaginatedTeamsAsync(
@@ -77,6 +80,8 @@ public class TeamService : ITeamService
         {
             return ServiceResult.Failure();
         }
+        
+        await _fileService.CreateMediaFolderAsync($"teams/{slug}");
 
         var newTeam = new Team
         {
@@ -100,7 +105,7 @@ public class TeamService : ITeamService
         {
             return ServiceResult.Failure("Η ομάδα δεν βρέθηκε");
         }
-        
+    
         team.IsActive = request.IsActive;
         team.IsArchived = request.IsArchived;
         team.YearFounded = request.YearFounded;
@@ -112,16 +117,22 @@ public class TeamService : ITeamService
 
         if (image is not null)
         {
-            // var result = await _fileService.SaveFileAsync(image, $"teams/{team.Slug}");
-            // if (result.IsSuccess)
-            // {
-            //     team.ProfileImagePath = result.Data;
-            // }
-        }
+            _fileService.DeleteFile(team.LogoLink);
         
+            var saveResult = await _fileService.SaveFileAsync(image, $"teams/{team.Slug}");
+            if (saveResult.IsSuccess)
+            {
+                team.LogoLink = saveResult.Value;
+            }
+            else
+            {
+                _logger.LogWarning("Could not save new logo for team {TeamSlug}: {ErrorMessage}", team.Slug, saveResult.Message);
+            }
+        }
+    
         _context.Teams.Update(team);
         await _context.SaveChangesAsync();
-        
+    
         return ServiceResult.Success();
     }
 

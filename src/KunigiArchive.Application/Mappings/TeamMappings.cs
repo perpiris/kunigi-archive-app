@@ -19,7 +19,8 @@ public static class TeamMappings
             FacebookLink =  team.FacebookLink,
             InstagramLink = team.InstagramLink,
             YoutubeLink =  team.YoutubeLink,
-            WebsiteLink =   team.WebsiteLink
+            WebsiteLink =   team.WebsiteLink,
+            LogoLink =    team.LogoLink
         };
 
         if (includeFullDetails)

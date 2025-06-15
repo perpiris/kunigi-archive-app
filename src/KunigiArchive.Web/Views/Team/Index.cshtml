@@ -29,15 +29,14 @@
                 <a asp-controller="Team" asp-action="Details" asp-route-idOrSlug="@team.Slug" class="text-decoration-none">
                     <div class="card h-100">
                         <div class="card-img-container">
-                            <img src="~/images/profile.jpg" class="card-img-top" alt="Default Team Image">
-                            @* @if (string.IsNullOrEmpty(team.ProfileImagePath)) *@
-                            @* { *@
-                            @*     <img src="~/images/profile.jpg" class="card-img-top" alt="Default Team Image"> *@
-                            @* } *@
-                            @* else *@
-                            @* { *@
-                            @*     <img src="~/@Url.Content(team.ProfileImagePath)" class="card-img-top" alt="@team.Name"> *@
-                            @* } *@
+                            @if (string.IsNullOrEmpty(team.LogoLink))
+                            {
+                                <img src="~/images/profile.jpg" class="card-img-top" alt="Default Team Image">
+                            }
+                            else
+                            {
+                                <img src="~/@Url.Content(team.LogoLink)" class="card-img-top" alt="@team.Name">
+                            }
                         </div>
                         <div class="card-body">
                             <h5 class="card-title text-center mb-0">@team.Name</h5>

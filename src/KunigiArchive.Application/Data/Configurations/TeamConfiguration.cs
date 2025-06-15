@@ -24,5 +24,7 @@ public class TeamConfiguration : IEntityTypeConfiguration<Team>
         builder.Property(x => x.InstagramLink).HasMaxLength(500);
         builder.Property(x => x.YoutubeLink).HasMaxLength(500);
         builder.Property(x => x.WebsiteLink).HasMaxLength(500);
+        
+        builder.Property(x => x.LogoLink).HasMaxLength(500);
     }
 }

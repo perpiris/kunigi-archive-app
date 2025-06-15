@@ -23,4 +23,6 @@ public class TeamDetailsResponse
     public string? YoutubeLink { get; set; } = string.Empty;
     
     public string? WebsiteLink { get; set; } = string.Empty;
+    
+    public string? LogoLink { get; set; } = string.Empty;
 }

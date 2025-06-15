@@ -162,7 +162,7 @@ public class TeamController : Controller
         var result = await _teamService.EditTeamAsync(viewModel.MapToEditRequest(), image, ModelState);
         if (!result.IsSuccess)
         {
-            TempData["error-alert"] = result.ErrorMessage;
+            TempData["error-alert"] = result.Message;
             return View(viewModel);
         }
 

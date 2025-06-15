@@ -22,6 +22,7 @@ public static class TeamMappings
             InstagramLink = response.InstagramLink,
             YoutubeLink = response.YoutubeLink,
             WebsiteLink = response.WebsiteLink,
+            LogoLink =  response.LogoLink
         };
     }
 

@@ -2,18 +2,15 @@
 
 @{
     ViewData["Title"] = "Σύνδεση";
+    ViewData["Banner"] = "Σύνδεση";
 }
 
 <div class="row justify-content-center">
     <div class="col-md-5 col-lg-4">
-        <div class="card shadow-lg border-0 mt-5">
+        <div class="card shadow-lg border-0 mt-2">
             <div class="card-body p-5">
-                <div class="text-center mb-4">
-                    <h3 class="fw-bold">Σύνδεση</h3>
-                </div>
                 
                 <form asp-action="Login" method="post">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
                     <div class="mb-4">
                         <label asp-for="Email" class="form-label fw-semibold"></label>

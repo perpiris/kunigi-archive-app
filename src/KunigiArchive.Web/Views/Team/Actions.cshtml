@@ -6,7 +6,7 @@
 }
 
 <div class="row g-4">
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card">
             <div class="card-body text-center p-4">
                 <i class="bi bi-eye-fill display-4 mb-3"></i>
@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card">
             <div class="card-body text-center p-4">
                 <i class="bi bi-pencil display-4 mb-3"></i>
@@ -28,18 +28,7 @@
         </div>
     </div>
 
-    <div class="col-md-3">
-        <div class="card">
-            <div class="card-body text-center p-4">
-                <i class="bi bi-people-fill display-4 mb-3"></i>
-                <h5 class="card-title">Διαχείριστές</h5>
-                <a asp-controller="Team" asp-action="EditManagers" asp-route-idOrSlug="@Model.Slug"
-                   class="stretched-link"></a>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card">
             <div class="card-body text-center p-4">
                 <i class="bi bi-card-image display-4 mb-3"></i>
@@ -50,26 +39,3 @@
         </div>
     </div>
 </div>
-
-@* <div class="mt-4"> *@
-@*     <hr/> *@
-@*     <div class="list-group mt-4"> *@
-@*         @if (Model.GamesHosted is not null && Model.GamesHosted.Any()) *@
-@*         { *@
-@*             @foreach (var game in Model.GamesHosted) *@
-@*             { *@
-@*                 <div class="list-group-item d-flex justify-content-between align-items-center"> *@
-@*                     <div class="d-flex align-items-center"> *@
-@*                         <span>@game.MainTitle @(game.SubTitle != null ? $"- {game.SubTitle}" : "") (@game.Year)</span> *@
-@*                     </div> *@
-@*                     <a asp-controller="Game" asp-action="Actions" asp-route-idOrSlug="@game.Slug" class="btn btn-secondary btn-sm">Ενέργειες</a> *@
-@*                 </div> *@
-@*             } *@
-@*         } *@
-@*     </div> *@
-@* *@
-@*     @if (Model.GamesHosted is null || Model.GamesHosted.Count == 0) *@
-@*     { *@
-@*         <p class="text-center text-muted">Δεν έχετε παιχνίδια προς διαχείριση.</p> *@
-@*     } *@
-@* </div> *@

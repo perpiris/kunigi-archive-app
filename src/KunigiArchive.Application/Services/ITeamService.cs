@@ -14,6 +14,8 @@ public interface ITeamService
         bool includeArchived,
         string sortBy,
         bool ascending);
+    
+    Task<IEnumerable<TeamDetailsResponse>> GetAllTeamsAsync();
 
     Task<ServiceResult> CreateTeamAsync(TeamCreateRequest request, ModelStateDictionary modelState);
     

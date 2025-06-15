@@ -1,7 +1,9 @@
 ﻿using KunigiArchive.Application.Services;
+using KunigiArchive.Web.Mappings;
 using KunigiArchive.Web.ViewModels.UserManagement;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace KunigiArchive.Web.Controllers;
 
@@ -10,32 +12,50 @@ namespace KunigiArchive.Web.Controllers;
 public class UserManagementController : Controller
 {
     private readonly IAccountService _accountService;
+    private readonly ITeamService _teamService;
 
-    public UserManagementController(IAccountService accountService)
+    public UserManagementController(IAccountService accountService, ITeamService teamService)
     {
         ArgumentNullException.ThrowIfNull(accountService);
+        ArgumentNullException.ThrowIfNull(teamService);
         
         _accountService = accountService;
+        _teamService = teamService;
     }
     
-    public async Task<IActionResult> Index(
+    public async Task<IActionResult> Manage(
         int pageNumber = 1, 
         int pageSize = 8,
         string sortBy = "name")
     {
+        var data = await _accountService.GetPaginatedUsersAsync(pageNumber, pageSize, sortBy);
         
-        
-        return View();
-    }
-    
-    [HttpGet("create")]
-    public IActionResult CreateUser()
-    {
-        var viewModel = new UserCreateViewModel();
+        var viewModel = data.MapToPaginatedViewModel();
         return View(viewModel);
     }
     
-    // [HttpPost("create")]
+    [HttpGet("create-user")]
+    public async Task<IActionResult> CreateUser()
+    {
+        var teamList = await _teamService.GetAllTeamsAsync();
+        var viewModel = new UserCreateViewModel
+        {
+            RolesList = new List<SelectListItem>
+            {
+                new() { Value = "Admin", Text = "Admin" },
+                new() { Value = "Manager", Text = "Manager" }
+            },
+            TeamList = teamList.Select(team => new SelectListItem
+            {
+                Value = team.TeamId.ToString(),
+                Text = team.Name
+            })
+        };
+
+        return View(viewModel);
+    }
+    
+    // [HttpPost("create-user")]
     // public async Task<IActionResult> CreateUser(UserCreateViewModel viewModel)
     // {
     //     if (!ModelState.IsValid)

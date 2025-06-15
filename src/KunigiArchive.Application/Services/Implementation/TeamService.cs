@@ -57,6 +57,12 @@ public class TeamService : ITeamService
         };
     }
 
+    public async Task<IEnumerable<TeamDetailsResponse>> GetAllTeamsAsync()
+    {
+        var items = await _context.Teams.ToListAsync();
+        return items.Select(x => x.MapToDetailsResponse()).ToList();
+    }
+
     public async Task<ServiceResult> CreateTeamAsync(TeamCreateRequest request, ModelStateDictionary modelState)
     {
         var slug = SlugGenerator.GenerateSlug(request.Name);

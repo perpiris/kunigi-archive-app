@@ -14,6 +14,12 @@ public static class TeamMappings
             Slug = team.Slug,
             IsActive = team.IsActive,
             IsArchived =  team.IsArchived,
+            YearFounded =  team.YearFounded,
+            Description =  team.Description,
+            FacebookLink =  team.FacebookLink,
+            InstagramLink = team.InstagramLink,
+            YoutubeLink =  team.YoutubeLink,
+            WebsiteLink =   team.WebsiteLink
         };
 
         if (includeFullDetails)

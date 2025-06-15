@@ -28,4 +28,14 @@ public static class UserMappings
             TotalPages = paginatedResponse.TotalPages
         };
     }
+
+    public static UserCreateRequest MapToCreateUserRequest(this UserCreateViewModel viewModel)
+    {
+        return new UserCreateRequest
+        {
+            Email = viewModel.Email,
+            Role = viewModel.SelectedRole,
+            TeamId = viewModel.SelectedTeamId
+        };
+    }
 }

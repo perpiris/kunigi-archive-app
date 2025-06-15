@@ -41,53 +41,75 @@ public class AccountController : Controller
         return View(viewModel);
     }
 
-    [HttpPost("settings")]
-    public async Task<IActionResult> AccountSettings(AccountSettingsViewModel viewModel)
+    [HttpPost("settings/email")]
+    public async Task<IActionResult> ChangeEmail(AccountSettingsViewModel viewModel)
     {
-        if (!ModelState.IsValid)
-        {
-            return View(viewModel);
-        }
-
         var user = await _userManager.GetUserAsync(User);
         if (user is null)
         {
             return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
         }
-        
-        var successMessages = new List<string>();
+
+        ModelState.Remove(nameof(viewModel.OldPassword));
+        ModelState.Remove(nameof(viewModel.NewPassword));
+        ModelState.Remove(nameof(viewModel.ConfirmNewPassword));
+
+        if (!ModelState.IsValid)
+        {
+            return View(nameof(AccountSettings), viewModel);
+        }
 
         if (viewModel.Email != user.Email)
         {
             var emailResult = await _accountService.ChangeEmailAsync(user.Id, viewModel.Email, ModelState);
             if (emailResult.IsSuccess)
             {
-                successMessages.Add("Your email has been changed successfully.");
+                TempData["success-alert"] = "Your email has been changed successfully.";
+                return RedirectToAction(nameof(AccountSettings));
             }
         }
-        
-        if (!string.IsNullOrEmpty(viewModel.NewPassword))
+        else
         {
-            if (string.IsNullOrEmpty(viewModel.OldPassword))
-            {
-                ModelState.AddModelError(nameof(viewModel.OldPassword), "Current password is required to set a new password.");
-            }
-            else
-            {
-                var passwordResult = await _accountService.UpdatePasswordAsync(user.Id, viewModel.OldPassword, viewModel.NewPassword, ModelState);
-                if (passwordResult.IsSuccess)
-                {
-                    successMessages.Add("Your password has been updated successfully.");
-                }
-            }
+            ModelState.AddModelError(nameof(viewModel.Email), "The new email must be different from the current email.");
+        }
+
+        return View(nameof(AccountSettings), viewModel);
+    }
+
+    [HttpPost("settings/password")]
+    public async Task<IActionResult> ChangePassword(AccountSettingsViewModel viewModel)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+        }
+        
+        viewModel.Email = user.Email ?? string.Empty;
+        ModelState.Remove(nameof(viewModel.Email));
+
+        if (string.IsNullOrEmpty(viewModel.NewPassword))
+        {
+            ModelState.AddModelError(nameof(viewModel.NewPassword), "New password is required.");
+        }
+        
+        if (string.IsNullOrEmpty(viewModel.OldPassword))
+        {
+            ModelState.AddModelError(nameof(viewModel.OldPassword), "Current password is required to set a new password.");
         }
 
         if (!ModelState.IsValid)
         {
-            return View(viewModel);
+            return View(nameof(AccountSettings), viewModel);
         }
-        
-        TempData["success-alerts"] = successMessages;
-        return RedirectToAction(nameof(AccountSettings));
+
+        var passwordResult = await _accountService.UpdatePasswordAsync(user.Id, viewModel.OldPassword!, viewModel.NewPassword!, ModelState);
+        if (passwordResult.IsSuccess)
+        {
+            TempData["success-alert"] = "Your password has been updated successfully.";
+            return RedirectToAction(nameof(AccountSettings));
+        }
+
+        return View(nameof(AccountSettings), viewModel);
     }
 }

@@ -14,7 +14,7 @@
 
                     <div class="mb-4">
                         <label asp-for="Email" class="form-label fw-semibold"></label>
-                        <input asp-for="Email" class="form-control form-control-lg" placeholder="email@example.com"/>
+                        <input asp-for="Email" class="form-control form-control-lg" />
                         <span asp-validation-for="Email" class="text-danger small"></span>
                     </div>
 
@@ -32,3 +32,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

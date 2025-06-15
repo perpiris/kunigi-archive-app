@@ -23,7 +23,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-4">
                                             <label asp-for="YearFounded" class="form-label fw-semibold"></label>
-                                            <input asp-for="YearFounded" class="form-control form-control-lg" type="number"/>
+                                            <input asp-for="YearFounded" class="form-control form-control-lg" type="number" pattern="\d{4}" maxlength="4" oninput="this.value = this.value.slice(0,4)"/>
                                             <span asp-validation-for="YearFounded" class="text-danger small"></span>
                                         </div>
                                     </div>

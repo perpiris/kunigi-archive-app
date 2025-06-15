@@ -7,11 +7,11 @@
 
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-7">
-        <div class="card shadow-lg border-0 mt-5">
+        <div class="card shadow-lg border-0 mt-2">
             <div class="card-body p-5">
-                
-                <form id="settings-form" method="post">
-                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                <form id="email-form" asp-action="ChangeEmail" method="post">
+
+                    <h5 class="fw-bold mb-3">Email</h5>
 
                     <div class="mb-4">
                         <label asp-for="Email" class="form-label fw-semibold"></label>
@@ -19,33 +19,43 @@
                         <span asp-validation-for="Email" class="text-danger small"></span>
                     </div>
 
-                    <hr class="my-4" />
+                    <div class="d-grid mt-5">
+                        <button id="update-email-button" type="submit" class="btn btn-primary btn-lg">Αποθήκευση Email</button>
+                    </div>
+                </form>
 
+                <hr class="my-4" />
+
+                <form id="password-form" asp-action="ChangePassword" method="post">
                     <h5 class="fw-bold mb-3">Αλλαγή Κωδικού</h5>
 
                     <div class="mb-4">
                         <label asp-for="OldPassword" class="form-label fw-semibold"></label>
-                        <input asp-for="OldPassword" class="form-control form-control-lg" type="password" placeholder="••••••••"/>
+                        <input asp-for="OldPassword" class="form-control form-control-lg" type="password" placeholder="••••••••" />
                         <span asp-validation-for="OldPassword" class="text-danger small"></span>
                     </div>
 
                     <div class="mb-4">
                         <label asp-for="NewPassword" class="form-label fw-semibold"></label>
-                        <input asp-for="NewPassword" class="form-control form-control-lg" type="password" placeholder="••••••••"/>
+                        <input asp-for="NewPassword" class="form-control form-control-lg" type="password" placeholder="••••••••" />
                         <span asp-validation-for="NewPassword" class="text-danger small"></span>
                     </div>
 
                     <div class="mb-4">
                         <label asp-for="ConfirmNewPassword" class="form-label fw-semibold"></label>
-                        <input asp-for="ConfirmNewPassword" class="form-control form-control-lg" type="password" placeholder="••••••••"/>
+                        <input asp-for="ConfirmNewPassword" class="form-control form-control-lg" type="password" placeholder="••••••••" />
                         <span asp-validation-for="ConfirmNewPassword" class="text-danger small"></span>
                     </div>
 
                     <div class="d-grid mt-5">
-                        <button id="update-settings-button" type="submit" class="btn btn-primary btn-lg">Αποθήκευση</button>
+                        <button id="update-password-button" type="submit" class="btn btn-primary btn-lg">Αλλαγή Κωδικού</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

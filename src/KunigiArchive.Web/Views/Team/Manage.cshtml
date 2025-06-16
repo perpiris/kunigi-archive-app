@@ -4,24 +4,30 @@
     ViewData["Title"] = "Διαχείριση Ομάδων";
     ViewData["Banner"] = "Διαχείριση Ομάδων";
     
-    var sortBy = ViewBag.SortBy ?? "name";
-    var ascending = ViewBag.Ascending ?? true;
+    var searchTerm = ViewBag.SearchTerm ?? "";
 }
 
 <div class="mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <a href="@Url.Action("Create", "Team")" class="btn btn-primary">Νέα Ομάδα</a>
-        @if (Model.Items.Any())
+        @if (Model.Items.Any() || !string.IsNullOrEmpty(searchTerm))
         {
-            <a class="btn btn-primary"
-               asp-controller="Team"
-               asp-action="Manage"
-               asp-route-pageNumber="@Model.CurrentPage"
-               asp-route-pageSize="@Model.PageSize"
-               asp-route-sortBy="name"
-               asp-route-ascending="@(!ascending)">
-                Αλφαβητικά <i class="bi @(ascending ? "bi-sort-up" : "bi-sort-down")"></i>
-            </a>
+            <div class="d-flex gap-2">
+                <form asp-controller="Team" asp-action="Manage" method="get" class="d-flex">
+                    <input type="hidden" name="pageNumber" value="1" />
+                    <input type="hidden" name="pageSize" value="@Model.PageSize" />
+                    <div class="input-group" style="max-width: 300px;">
+                        <input type="text" name="searchTerm" value="@searchTerm" class="form-control" placeholder="Αναζήτηση ομάδας..." />
+                        <button type="submit" class="btn btn-outline-secondary">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+                @if (!string.IsNullOrEmpty(searchTerm))
+                {
+                    <a asp-controller="Team" asp-action="Manage" class="btn btn-secondary">Καθαρισμός</a>
+                }
+            </div>
         }
     </div>
 
@@ -63,8 +69,7 @@
                        asp-action="Manage" 
                        asp-route-pageNumber="@i" 
                        asp-route-pageSize="@Model.PageSize"
-                       asp-route-sortBy="@sortBy"
-                       asp-route-ascending="@ascending">@i</a>
+                       asp-route-searchTerm="@searchTerm">@i</a>
                 </li>
             }
         </ul>

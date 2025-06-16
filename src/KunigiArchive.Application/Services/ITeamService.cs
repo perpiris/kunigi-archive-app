@@ -12,8 +12,7 @@ public interface ITeamService
         int page,
         int pageSize,
         bool includeArchived,
-        string sortBy,
-        bool ascending);
+        string? searchTerm = null);
     
     Task<IEnumerable<TeamDetailsResponse>> GetAllTeamsAsync();
 

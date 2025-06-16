@@ -41,8 +41,7 @@ public class TeamService : ITeamService
         int page,
         int pageSize,
         bool includeArchived,
-        string sortBy,
-        bool ascending)
+        string? searchTerm = null)
     {
         var query = _context.Teams.AsNoTracking();
 
@@ -51,7 +50,12 @@ public class TeamService : ITeamService
             query = query.Where(x => !x.IsArchived);
         }
 
-        query = ApplySorting(query, sortBy, ascending);
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(x => x.Name.Contains(searchTerm));
+        }
+
+        query = query.OrderBy(x => x.Name);
 
         var totalItems = await query.CountAsync();
         var items = await query

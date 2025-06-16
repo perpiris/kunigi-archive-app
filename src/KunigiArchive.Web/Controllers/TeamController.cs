@@ -21,15 +21,13 @@ public class TeamController : Controller
 
     public async Task<IActionResult> Index(
         int pageNumber = 1, 
-        int pageSize = 8, 
-        string sortBy = "name",
-        bool ascending = true)
+        int pageSize = 6, 
+        string? searchTerm = null)
     {
         var data = 
-            await _teamService.GetPaginatedTeamsAsync(pageNumber, pageSize, false, sortBy, ascending);
+            await _teamService.GetPaginatedTeamsAsync(pageNumber, pageSize, false, searchTerm);
 
-        ViewBag.SortBy = sortBy;
-        ViewBag.Ascending = ascending;
+        ViewBag.SearchTerm = searchTerm;
 
         var viewModel = data.MapToPaginatedViewModel();
         return View(viewModel);
@@ -40,14 +38,12 @@ public class TeamController : Controller
     public async Task<IActionResult> Manage(
         int pageNumber = 1, 
         int pageSize = 8, 
-        string sortBy = "name",
-        bool ascending = true)
+        string? searchTerm = null)
     {
         var data = 
-            await _teamService.GetPaginatedTeamsAsync(pageNumber, pageSize, true, sortBy, ascending);
+            await _teamService.GetPaginatedTeamsAsync(pageNumber, pageSize, true, searchTerm);
 
-        ViewBag.SortBy = sortBy;
-        ViewBag.Ascending = ascending;
+        ViewBag.SearchTerm = searchTerm;
 
         var viewModel = data.MapToPaginatedViewModel();
         return View(viewModel);

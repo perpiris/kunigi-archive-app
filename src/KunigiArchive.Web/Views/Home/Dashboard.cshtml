@@ -40,5 +40,29 @@
 
 @if (User.IsInRole("Manager"))
 {
-    
+    <div class="mt-4">
+        <div class="list-group mt-4">
+            @if (ViewBag.TeamList is IEnumerable<TeamDetailsViewModel> teamList)
+            {
+                var teamDetailsViewModels = teamList as TeamDetailsViewModel[] ?? teamList.ToArray();
+                if (teamDetailsViewModels.Any())
+                {
+                    @foreach (var team in teamDetailsViewModels)
+                    {
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <span>@team.Name</span>
+                            </div>
+                            <a asp-controller="Team" asp-action="Actions" asp-route-idOrSlug="@team.Slug" class="btn btn-secondary btn-sm">Ενέργειες</a>
+                        </div>
+                    }
+                }
+            }
+        </div>
+
+        @if (ViewBag.TeamList == null || (ViewBag.TeamList is IEnumerable<TeamDetailsViewModel> emptyList && !emptyList.Any()))
+        {
+            <p class="text-center text-muted">Δεν έχετε ομάδες προς διαχείριση.</p>
+        }
+    </div>
 }

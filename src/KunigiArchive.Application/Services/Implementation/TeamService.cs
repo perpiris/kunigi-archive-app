@@ -129,6 +129,11 @@ public class TeamService : ITeamService
                 _logger.LogWarning("Could not save new logo for team {TeamSlug}: {ErrorMessage}", team.Slug, saveResult.Message);
             }
         }
+        
+        if (!modelState.IsValid)
+        {
+            return ServiceResult.Failure();
+        }
     
         _context.Teams.Update(team);
         await _context.SaveChangesAsync();
@@ -180,6 +185,22 @@ public class TeamService : ITeamService
         }
 
         return team?.MapToDetailsResponse(includeFullDetails);
+    }
+
+    public async Task<IEnumerable<TeamDetailsResponse>> GetManagerTeamsAsync(string userIdString)
+    {
+        var userId = long.Parse(userIdString);
+
+        var teamList =
+            await _context.TeamManagers
+                .Include(x => x.Team)
+                .Where(x => x.ApplicationUserId == userId)
+                .Select(x => x.Team)
+                .ToListAsync();
+
+        return teamList
+            .Select(x => x.MapToDetailsResponse())
+            .ToList();
     }
     
     private static IQueryable<Team> ApplySorting(IQueryable<Team> query, string sortBy, bool ascending)

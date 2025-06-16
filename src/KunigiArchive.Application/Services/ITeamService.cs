@@ -25,4 +25,6 @@ public interface ITeamService
     Task<bool> CanUserAccessTeam(long userId, string idOrSlug);
     
     Task<TeamDetailsResponse?> GetTeamByIdOrSlugAsync(string idOrSlug, bool includeFullDetails);
+
+    Task<IEnumerable<TeamDetailsResponse>> GetManagerTeamsAsync(string userIdString);
 }

@@ -6,6 +6,7 @@ namespace KunigiArchive.Application.Data;
 
 public class DataContext : IdentityDbContext<ApplicationUser, ApplicationRole, long>
 {
+    public DbSet<ApplicationUser> Users { get; set; }
     public DbSet<Team> Teams { get; set; }
     public DbSet<TeamManager> TeamManagers { get; set; }
     

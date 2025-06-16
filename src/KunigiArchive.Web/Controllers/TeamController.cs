@@ -169,4 +169,66 @@ public class TeamController : Controller
         TempData["success-alert"] = "Η ομάδα επεξεργάστηκε επιτυχώς.";
         return RedirectToAction(nameof(Actions), new { idOrSlug });
     }
+    
+    [HttpGet("{idOrSlug}/edit-managers")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> EditManagers(string idOrSlug)
+    {
+        var data = await _teamService.GetTeamByIdOrSlugAsync(idOrSlug, false);
+        if (data is null)
+        {
+            TempData["error-alert"] = "Η ομάδα δεν βρέθηκε.";
+            return RedirectToAction("NotFound", "Home");
+        }
+
+        var teamWithManagers = await _teamService.GetTeamWithManagersAsync(idOrSlug);
+        if (teamWithManagers is null)
+        {
+            TempData["error-alert"] = "Η ομάδα δεν βρέθηκε.";
+            return RedirectToAction("NotFound", "Home");
+        }
+
+        var viewModel = teamWithManagers.MapToTeamManagerDetailsViewModel();
+        return View(viewModel);
+    }
+
+    [HttpPost("{idOrSlug}/add-manager")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> AddManager(string idOrSlug, [FromForm] long userId)
+    {
+        var data = await _teamService.GetTeamByIdOrSlugAsync(idOrSlug, false);
+        if (data is null)
+        {
+            TempData["error-alert"] = "Η ομάδα δεν βρέθηκε.";
+            return RedirectToAction("NotFound", "Home");
+        }
+
+        var result = await _teamService.AddTeamManagerAsync(idOrSlug, userId);
+        if (result.IsSuccess)
+        {
+            TempData["success-alert"] = "Ο διαχειριστής προστέθηκε με επιτυχία.";
+        }
+
+        return RedirectToAction("EditManagers", new { idOrSlug });
+    }
+
+    [HttpPost("{idOrSlug}/remove-manager")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> RemoveManager(string idOrSlug, [FromForm] long userId)
+    {
+        var data = await _teamService.GetTeamByIdOrSlugAsync(idOrSlug, false);
+        if (data is null)
+        {
+            TempData["error-alert"] = "Η ομάδα δεν βρέθηκε.";
+            return RedirectToAction("NotFound", "Home");
+        }
+
+        var result = await _teamService.RemoveTeamManagerAsync(idOrSlug, userId);
+        if (result.IsSuccess)
+        {
+            TempData["success-alert"] = "Ο διαχειριστής αφαιρέθηκε με επιτυχία.";
+        }
+
+        return RedirectToAction("EditManagers", new { idOrSlug });
+    }
 }

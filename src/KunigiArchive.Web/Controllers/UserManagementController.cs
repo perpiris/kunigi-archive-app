@@ -14,7 +14,9 @@ public class UserManagementController : Controller
     private readonly IAccountService _accountService;
     private readonly ITeamService _teamService;
 
-    public UserManagementController(IAccountService accountService, ITeamService teamService)
+    public UserManagementController(
+        IAccountService accountService, 
+        ITeamService teamService)
     {
         ArgumentNullException.ThrowIfNull(accountService);
         ArgumentNullException.ThrowIfNull(teamService);

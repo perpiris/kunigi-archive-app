@@ -69,4 +69,16 @@ public static class TeamMappings
             viewModel.YoutubeLink,  
             viewModel.WebsiteLink);
     }
+
+    public static TeamManagerDetailsViewModel MapToTeamManagerDetailsViewModel(this TeamManagerDetailsResponse response)
+    {
+        return new TeamManagerDetailsViewModel
+        {
+            TeamId = response.TeamId,
+            TeamName =  response.TeamName,
+            Slug =   response.Slug,
+            CurrentManagers =   response.CurrentManagers.Select(x => x.MapToDetailsViewModel()).ToList(),
+            AvailableUsers =  response.AvailableUsers.Select(x => x.MapToDetailsViewModel()).ToList()
+        };
+    }
 }

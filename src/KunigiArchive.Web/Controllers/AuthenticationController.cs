@@ -10,7 +10,9 @@ public class AuthenticationController : Controller
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
 
-    public AuthenticationController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
+    public AuthenticationController(
+        UserManager<ApplicationUser> userManager, 
+        SignInManager<ApplicationUser> signInManager)
     {
         ArgumentNullException.ThrowIfNull(userManager);
         ArgumentNullException.ThrowIfNull(signInManager);

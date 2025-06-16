@@ -15,7 +15,9 @@ public class AccountController : Controller
     private readonly IAccountService _accountService;
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public AccountController(IAccountService accountService, UserManager<ApplicationUser> userManager)
+    public AccountController(
+        IAccountService accountService, 
+        UserManager<ApplicationUser> userManager)
     {
         ArgumentNullException.ThrowIfNull(accountService);
         ArgumentNullException.ThrowIfNull(userManager);

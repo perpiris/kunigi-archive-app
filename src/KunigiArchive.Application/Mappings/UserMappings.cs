@@ -5,8 +5,13 @@ namespace KunigiArchive.Application.Mappings;
 
 public static class UserMappings
 {
-    public static UserDetailsResponse MapToUserDetailsResponse(this ApplicationUser user, IEnumerable<string> roles)
+    public static UserDetailsResponse MapToUserDetailsResponse(this ApplicationUser user, IEnumerable<string>? roles)
     {
-        return new UserDetailsResponse(user.Id, user.UserName!, user.Email!, roles);
+        return new UserDetailsResponse
+        {
+            ApplicationUserId =  user.Id,
+            Email = user.Email,
+            Roles = roles,
+        };
     }
 }

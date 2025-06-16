@@ -14,16 +14,20 @@ public class AccountService : IAccountService
 {
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<AccountService> _logger;
+    private readonly ITeamService _teamService;
 
     public AccountService(
         UserManager<ApplicationUser> userManager,
-        ILogger<AccountService> logger)
+        ILogger<AccountService> logger, 
+        ITeamService teamService)
     {
         ArgumentNullException.ThrowIfNull(userManager);
         ArgumentNullException.ThrowIfNull(logger);
+        ArgumentNullException.ThrowIfNull(teamService);
 
         _userManager = userManager;
         _logger = logger;
+        _teamService = teamService;
     }
     
     public async Task<PaginatedResponse<UserDetailsResponse>> GetPaginatedUsersAsync(

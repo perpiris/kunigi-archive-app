@@ -13,7 +13,6 @@ public static class UserMappings
         {
             ApplicationUserId = response.ApplicationUserId,
             Email = response.Email,
-            UserName =  response.UserName,
             Roles = response.Roles,
         };
     }

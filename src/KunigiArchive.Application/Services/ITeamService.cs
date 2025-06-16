@@ -27,4 +27,10 @@ public interface ITeamService
     Task<TeamDetailsResponse?> GetTeamByIdOrSlugAsync(string idOrSlug, bool includeFullDetails);
 
     Task<IEnumerable<TeamDetailsResponse>> GetManagerTeamsAsync(string userIdString);
+
+    Task<TeamManagerDetailsResponse?> GetTeamWithManagersAsync(string idOrSlug);
+
+    Task<ServiceResult> AddTeamManagerAsync(string idOrSlug, long applicationUserId);
+
+    Task<ServiceResult> RemoveTeamManagerAsync(string idOrSlug, long applicationUserId);
 }

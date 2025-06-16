@@ -17,16 +17,23 @@ public class TeamService : ITeamService
     private readonly DataContext _context;
     private readonly ILogger<TeamService> _logger;
     private readonly IFileService _fileService;
+    private readonly IAccountService _accountService;
 
-    public TeamService(DataContext context, ILogger<TeamService> logger, IFileService fileService)
+    public TeamService(
+        DataContext context, 
+        ILogger<TeamService> logger, 
+        IFileService fileService, 
+        IAccountService accountService)
     {
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(fileService);
+        ArgumentNullException.ThrowIfNull(accountService);
 
         _context = context;
         _logger = logger;
         _fileService = fileService;
+        _accountService = accountService;
     }
 
     public async Task<PaginatedResponse<TeamDetailsResponse>> GetPaginatedTeamsAsync(
@@ -53,7 +60,7 @@ public class TeamService : ITeamService
 
         return new PaginatedResponse<TeamDetailsResponse>
         {
-            Items = items.Select(x => x.MapToDetailsResponse()).ToList(),
+            Items = items.Select(x => x.MapToTeamDetailsResponse()).ToList(),
             CurrentPage = page,
             PageSize = pageSize,
             TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
@@ -63,7 +70,7 @@ public class TeamService : ITeamService
     public async Task<IEnumerable<TeamDetailsResponse>> GetAllTeamsAsync()
     {
         var items = await _context.Teams.ToListAsync();
-        return items.Select(x => x.MapToDetailsResponse()).ToList();
+        return items.Select(x => x.MapToTeamDetailsResponse()).ToList();
     }
 
     public async Task<ServiceResult> CreateTeamAsync(TeamCreateRequest request, ModelStateDictionary modelState)
@@ -184,7 +191,7 @@ public class TeamService : ITeamService
             team = await query.FirstOrDefaultAsync(x => x.Slug == idOrSlug);
         }
 
-        return team?.MapToDetailsResponse(includeFullDetails);
+        return team?.MapToTeamDetailsResponse(includeFullDetails);
     }
 
     public async Task<IEnumerable<TeamDetailsResponse>> GetManagerTeamsAsync(string userIdString)
@@ -199,8 +206,131 @@ public class TeamService : ITeamService
                 .ToListAsync();
 
         return teamList
-            .Select(x => x.MapToDetailsResponse())
+            .Select(x => x.MapToTeamDetailsResponse())
             .ToList();
+    }
+    
+    public async Task<TeamManagerDetailsResponse?> GetTeamWithManagersAsync(string idOrSlug)
+    {
+        Team? team;
+        if (long.TryParse(idOrSlug, out var teamId))
+        {
+            team = await _context.Teams.FirstOrDefaultAsync(x => x.TeamId == teamId);
+        }
+        else
+        {
+            team = await _context.Teams.FirstOrDefaultAsync(x => x.Slug == idOrSlug);
+        }
+
+        if (team is null)
+        {
+            return null;
+        }
+
+        var teamManagers = await _context.TeamManagers
+            .Include(x => x.ApplicationUser)
+            .Where(x => x.TeamId == team.TeamId)
+            .ToListAsync();
+
+        var currentManagerIds = teamManagers.Select(x => x.ApplicationUserId).ToHashSet();
+
+        var users = await _context.Users
+            .ToListAsync();
+
+        var currentManagers = teamManagers
+            .Select(x => x.MapToUserDetailsResponse())
+            .ToList();
+
+        var availableUsers = users
+            .Where(x => !currentManagerIds.Contains(x.Id))
+            .Select(x => x.MapToUserDetailsResponse(null))
+            .ToList();
+
+        return new TeamManagerDetailsResponse
+        {
+            TeamId = team.TeamId,
+            TeamName = team.Name,
+            Slug = team.Slug,
+            CurrentManagers = currentManagers,
+            AvailableUsers = availableUsers
+        };
+    }
+
+    public async Task<ServiceResult> AddTeamManagerAsync(string idOrSlug, long applicationUserId)
+    {
+        Team? team;
+        if (long.TryParse(idOrSlug, out var teamId))
+        {
+            team = await _context.Teams.FirstOrDefaultAsync(x => x.TeamId == teamId);
+        }
+        else
+        {
+            team = await _context.Teams.FirstOrDefaultAsync(x => x.Slug == idOrSlug);
+        }
+
+        if (team is null)
+        {
+            return ServiceResult.Failure("Η ομάδα δεν βρέθηκε");
+        }
+
+        var userExists = await _context.Users.AnyAsync(x => x.Id == applicationUserId);
+        if (!userExists)
+        {
+            return ServiceResult.Failure("Ο χρήστης δεν βρέθηκε");
+        }
+
+        var managerExists = await _context.TeamManagers
+            .AnyAsync(x => x.TeamId == team.TeamId && x.ApplicationUserId == applicationUserId);
+        if (managerExists)
+        {
+            return ServiceResult.Failure("Ο χρήστης είναι ήδη διαχειριστής της ομάδας");
+        }
+
+        var teamManager = new TeamManager
+        {
+            TeamId = team.TeamId,
+            ApplicationUserId = applicationUserId
+        };
+
+        _context.TeamManagers.Add(teamManager);
+        await _context.SaveChangesAsync();
+
+        // TODO: Add ASP role service call here
+
+        return ServiceResult.Success();
+    }
+
+    public async Task<ServiceResult> RemoveTeamManagerAsync(string idOrSlug, long applicationUserId)
+    {
+        Team? team;
+        if (long.TryParse(idOrSlug, out var teamId))
+        {
+            team = await _context.Teams.FirstOrDefaultAsync(x => x.TeamId == teamId);
+        }
+        else
+        {
+            team = await _context.Teams.FirstOrDefaultAsync(x => x.Slug == idOrSlug);
+        }
+
+        if (team is null)
+        {
+            return ServiceResult.Failure("Η ομάδα δεν βρέθηκε");
+        }
+
+        var teamManager = await _context.TeamManagers
+            .FirstOrDefaultAsync(x => x.TeamId == team.TeamId && x.ApplicationUserId == applicationUserId);
+
+        if (teamManager is null)
+        {
+            return ServiceResult.Failure("Ο διαχειριστής δεν βρέθηκε");
+        }
+
+        _context.TeamManagers.Remove(teamManager);
+        await _context.SaveChangesAsync();
+
+        // TODO: Remove ASP role service call here
+
+        return ServiceResult.Success();
     }
     
     private static IQueryable<Team> ApplySorting(IQueryable<Team> query, string sortBy, bool ascending)

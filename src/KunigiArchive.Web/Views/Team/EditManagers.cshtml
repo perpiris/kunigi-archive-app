@@ -1,0 +1,103 @@
+﻿@model TeamManagerDetailsViewModel
+
+@{
+    ViewData["Title"] = $"{Model.TeamName} - Διαχειριστές";
+    ViewData["Banner"] = ViewData["Title"];
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-lg border-0 mt-2 h-100">
+            <div class="card-body p-5">
+                <h5 class="mb-4">Προσθήκη Διαχειριστή</h5>
+                @if (Model.AvailableUsers.Any())
+                {
+                    <form asp-action="AddManager" asp-route-idOrSlug="@Model.Slug" method="post">
+                        <div class="mb-4">
+                            <label for="userSearchInput" class="form-label fw-semibold">Αναζήτηση χρήστη</label>
+                            <input type="text" id="userSearchInput" class="form-control form-control-lg" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="userSelect" class="form-label fw-semibold">Επιλογή Χρήστη</label>
+                            <select name="userId" id="userSelect" class="form-select form-select-lg">
+                                @foreach (var user in Model.AvailableUsers)
+                                {
+                                    <option value="@user.ApplicationUserId" data-email="@user.Email.ToLower()">
+                                        @user.Email
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Προσθήκη Διαχειριστή</button>
+                            <a asp-action="Actions" asp-route-idOrSlug="@Model.Slug" class="btn btn-secondary btn-lg">Επιστροφή</a>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <p class="text-muted mt-3">Δεν υπάρχουν διαθέσιμοι χρήστες για προσθήκη ως διαχειριστές.</p>
+                        <div class="d-grid">
+                            <a asp-action="Actions" asp-route-idOrSlug="@Model.Slug" class="btn btn-secondary btn-lg mt-2">Επιστροφή</a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card shadow-lg border-0 mt-2 h-100">
+            <div class="card-body p-5">
+                <h5 class="mb-4">Τρέχοντες Διαχειριστές</h5>
+                @if (Model.CurrentManagers.Any())
+                {
+                    <div class="list-group">
+                        @foreach (var manager in Model.CurrentManagers)
+                        {
+                            <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                <span>@manager.Email</span>
+                                <form asp-action="RemoveManager" asp-route-idOrSlug="@Model.Slug" method="post">
+                                    <input type="hidden" name="userId" value="@manager.ApplicationUserId"/>
+                                    <button type="submit" class="btn btn-danger">Αφαίρεση</button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <p class="text-muted mt-3">Δεν υπάρχουν διαχειριστές για αυτή την ομάδα.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('userSearchInput');
+            const userSelect = document.getElementById('userSelect');
+            const options = Array.from(userSelect.options);
+            
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                
+                options.forEach(option => {
+                    const email = option.getAttribute('data-email');
+                    const matches = email.includes(searchTerm);
+                    option.style.display = matches ? '' : 'none';
+                });
+                
+                const visibleOptions = options.filter(opt => opt.style.display !== 'none');
+                if (visibleOptions.length > 0) {
+                    visibleOptions[0].selected = true;
+                }
+            });
+        });
+    </script>
+}

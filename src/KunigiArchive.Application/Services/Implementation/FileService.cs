@@ -12,7 +12,9 @@ public class FileService : IFileService
     private readonly ILogger<FileService> _logger;
     private const string MediaFolderName = "media";
     
-    public FileService(IWebHostEnvironment webHostEnvironment, ILogger<FileService> logger)
+    public FileService(
+        IWebHostEnvironment webHostEnvironment, 
+        ILogger<FileService> logger)
     {
         ArgumentNullException.ThrowIfNull(webHostEnvironment);
         ArgumentNullException.ThrowIfNull(logger);

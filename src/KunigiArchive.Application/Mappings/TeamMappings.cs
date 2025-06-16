@@ -1,11 +1,12 @@
 ﻿using KunigiArchive.Contracts.Team;
+using KunigiArchive.Contracts.User;
 using KunigiArchive.Domain.Entities;
 
 namespace KunigiArchive.Application.Mappings;
 
 public static class TeamMappings
 {
-    public static TeamDetailsResponse MapToDetailsResponse(this Team team, bool includeFullDetails = false)
+    public static TeamDetailsResponse MapToTeamDetailsResponse(this Team team, bool includeFullDetails = false)
     {
         var response = new TeamDetailsResponse
         {
@@ -29,5 +30,14 @@ public static class TeamMappings
         }
 
         return response;
+    }
+
+    public static UserDetailsResponse MapToUserDetailsResponse(this TeamManager teamManager)
+    {
+        return new UserDetailsResponse
+        {
+            ApplicationUserId =  teamManager.ApplicationUserId,
+            Email = teamManager.ApplicationUser.Email!
+        };
     }
 }

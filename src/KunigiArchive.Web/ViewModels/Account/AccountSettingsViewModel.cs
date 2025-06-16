@@ -10,16 +10,16 @@ public class AccountSettingsViewModel
     public required string Email { get; set; }
 
     [DataType(DataType.Password)]
-    [Display(Name = "Current password")]
+    [Display(Name = "Κωδικός")]
     public string? OldPassword { get; set; }
 
-    [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+    [StringLength(100, ErrorMessage = "Ο {0} πρέπει να είναι μεταξύ {2} και μέγιστο {1} χαρακτήρες.", MinimumLength = 6)]
     [DataType(DataType.Password)]
-    [Display(Name = "New password")]
+    [Display(Name = "Νέος Κωδικός")]
     public string? NewPassword { get; set; }
 
     [DataType(DataType.Password)]
-    [Display(Name = "Confirm new password")]
-    [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
+    [Display(Name = "Επαλήθευση νέου κωδικού")]
+    [Compare("NewPassword", ErrorMessage = "Η επαλήθευση κωδικού δεν ταιριάζει με τον νέο κωδικό.")]
     public string? ConfirmNewPassword { get; set; }
 }

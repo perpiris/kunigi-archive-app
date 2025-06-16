@@ -59,18 +59,11 @@ public class AccountController : Controller
             return View(nameof(AccountSettings), viewModel);
         }
 
-        if (viewModel.Email != user.Email)
+        var emailResult = await _accountService.ChangeEmailAsync(user.Id, viewModel.Email, ModelState);
+        if (emailResult.IsSuccess)
         {
-            var emailResult = await _accountService.ChangeEmailAsync(user.Id, viewModel.Email, ModelState);
-            if (emailResult.IsSuccess)
-            {
-                TempData["success-alert"] = "Your email has been changed successfully.";
-                return RedirectToAction(nameof(AccountSettings));
-            }
-        }
-        else
-        {
-            ModelState.AddModelError(nameof(viewModel.Email), "The new email must be different from the current email.");
+            TempData["success-alert"] = "Your email has been changed successfully.";
+            return RedirectToAction(nameof(AccountSettings));
         }
 
         return View(nameof(AccountSettings), viewModel);
@@ -87,17 +80,7 @@ public class AccountController : Controller
         
         viewModel.Email = user.Email ?? string.Empty;
         ModelState.Remove(nameof(viewModel.Email));
-
-        if (string.IsNullOrEmpty(viewModel.NewPassword))
-        {
-            ModelState.AddModelError(nameof(viewModel.NewPassword), "New password is required.");
-        }
         
-        if (string.IsNullOrEmpty(viewModel.OldPassword))
-        {
-            ModelState.AddModelError(nameof(viewModel.OldPassword), "Current password is required to set a new password.");
-        }
-
         if (!ModelState.IsValid)
         {
             return View(nameof(AccountSettings), viewModel);

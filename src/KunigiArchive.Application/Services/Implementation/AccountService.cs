@@ -76,6 +76,7 @@ public class AccountService : IAccountService
         var identityResult = await _userManager.CreateAsync(user, request.Email);
         if (!identityResult.Succeeded)
         {
+            _logger.LogWarning("User creation failed for email {Email}. Errors: {Errors}", request.Email, string.Join(", ", identityResult.Errors.Select(e => e.Description)));
             foreach (var error in identityResult.Errors)
             {
                 modelState.AddModelError(string.Empty, error.Description);
@@ -86,6 +87,7 @@ public class AccountService : IAccountService
         var roleResult = await _userManager.AddToRoleAsync(user, request.Role);
         if (!roleResult.Succeeded)
         {
+            _logger.LogWarning("Failed to add role {Role} to user {Email}. Errors: {Errors}", request.Role, user.Email, string.Join(", ", roleResult.Errors.Select(e => e.Description)));
             foreach (var error in roleResult.Errors)
             {
                 modelState.AddModelError(string.Empty, error.Description);
@@ -111,6 +113,7 @@ public class AccountService : IAccountService
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
             {
+                _logger.LogWarning("Failed to add user {Email} as manager for TeamId {TeamId}. Errors: {Errors}", user.Email, request.TeamId, string.Join(", ", updateResult.Errors.Select(e => e.Description)));
                 foreach (var error in updateResult.Errors)
                 {
                     modelState.AddModelError(string.Empty, error.Description);
@@ -128,6 +131,7 @@ public class AccountService : IAccountService
         var user = await _userManager.FindByIdAsync(userId.ToString());
         if (user is null)
         {
+            _logger.LogWarning("Attempted to change email for a non-existent user with ID {UserId}", userId);
             modelState.AddModelError(string.Empty, "User not found.");
             return ServiceResult.Failure();
         }
@@ -145,9 +149,11 @@ public class AccountService : IAccountService
             return ServiceResult.Failure();
         }
 
+        var originalEmail = user.Email;
         var setEmailResult = await _userManager.SetEmailAsync(user, newEmail);
         if (!setEmailResult.Succeeded)
         {
+            _logger.LogWarning("Failed to set email for user {UserId}. Errors: {Errors}", userId, string.Join(", ", setEmailResult.Errors.Select(e => e.Description)));
             foreach (var error in setEmailResult.Errors)
             {
                 modelState.AddModelError(string.Empty, error.Description);
@@ -158,7 +164,8 @@ public class AccountService : IAccountService
         var setUserNameResult = await _userManager.SetUserNameAsync(user, newEmail);
         if (!setUserNameResult.Succeeded)
         {
-            await _userManager.SetEmailAsync(user, user.Email); 
+            _logger.LogError("Failed to set username for user {UserId} after email was already changed. Attempting to revert email change. Errors: {Errors}", userId, string.Join(", ", setUserNameResult.Errors.Select(e => e.Description)));
+            await _userManager.SetEmailAsync(user, originalEmail); 
             
             foreach (var error in setUserNameResult.Errors)
             {
@@ -172,9 +179,25 @@ public class AccountService : IAccountService
 
     public async Task<ServiceResult> UpdatePasswordAsync(long userId, string oldPassword, string newPassword, ModelStateDictionary modelState)
     {
+        if (string.IsNullOrEmpty(newPassword))
+        {
+            modelState.AddModelError("NewPassword", "New password is required.");
+        }
+        
+        if (string.IsNullOrEmpty(oldPassword))
+        {
+            modelState.AddModelError("OldPassword", "Current password is required to set a new password.");
+        }
+
+        if (!modelState.IsValid)
+        {
+            return ServiceResult.Failure();
+        }
+
         var user = await _userManager.FindByIdAsync(userId.ToString());
         if (user is null)
         {
+            _logger.LogWarning("Attempted to update password for a non-existent user with ID {UserId}", userId);
             modelState.AddModelError(string.Empty, "User not found.");
             return ServiceResult.Failure();
         }
@@ -182,6 +205,7 @@ public class AccountService : IAccountService
         var changePasswordResult = await _userManager.ChangePasswordAsync(user, oldPassword, newPassword);
         if (!changePasswordResult.Succeeded)
         {
+            _logger.LogWarning("Password change failed for user {UserId}. Errors: {Errors}", userId, string.Join(", ", changePasswordResult.Errors.Select(e => e.Description)));
             foreach (var error in changePasswordResult.Errors)
             {
                 modelState.AddModelError(string.Empty, error.Description);

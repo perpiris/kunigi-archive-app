@@ -109,19 +109,11 @@ public class AccountService : IAccountService
                 return ServiceResult.Failure();
             }
 
-            user.ManagedTeams.Add(new TeamManager
+            var addManagerResult = await _teamService.AddTeamManagerAsync(request.TeamId.Value.ToString(), user.Id);
+            if (!addManagerResult.IsSuccess)
             {
-                TeamId = request.TeamId.Value
-            });
-
-            var updateResult = await _userManager.UpdateAsync(user);
-            if (!updateResult.Succeeded)
-            {
-                _logger.LogWarning("Failed to add user {Email} as manager for TeamId {TeamId}. Errors: {Errors}", user.Email, request.TeamId, string.Join(", ", updateResult.Errors.Select(e => e.Description)));
-                foreach (var error in updateResult.Errors)
-                {
-                    modelState.AddModelError(string.Empty, error.Description);
-                }
+                _logger.LogWarning("Failed to add user {Email} as manager for TeamId {TeamId}. Error: {Error}", user.Email, request.TeamId, addManagerResult.Message);
+                modelState.AddModelError(string.Empty, addManagerResult.Message);
                 await _userManager.DeleteAsync(user);
                 return ServiceResult.Failure();
             }

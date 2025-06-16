@@ -6,6 +6,7 @@ using KunigiArchive.Contracts.Common;
 using KunigiArchive.Contracts.Team;
 using KunigiArchive.Domain.Entities;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -17,23 +18,23 @@ public class TeamService : ITeamService
     private readonly DataContext _context;
     private readonly ILogger<TeamService> _logger;
     private readonly IFileService _fileService;
-    private readonly IAccountService _accountService;
+    private readonly UserManager<ApplicationUser> _userManager;
 
     public TeamService(
         DataContext context, 
         ILogger<TeamService> logger, 
         IFileService fileService, 
-        IAccountService accountService)
+        UserManager<ApplicationUser> userManager)
     {
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(logger);
         ArgumentNullException.ThrowIfNull(fileService);
-        ArgumentNullException.ThrowIfNull(accountService);
+        ArgumentNullException.ThrowIfNull(userManager);
 
         _context = context;
         _logger = logger;
         _fileService = fileService;
-        _accountService = accountService;
+        _userManager = userManager;
     }
 
     public async Task<PaginatedResponse<TeamDetailsResponse>> GetPaginatedTeamsAsync(
@@ -295,7 +296,19 @@ public class TeamService : ITeamService
         _context.TeamManagers.Add(teamManager);
         await _context.SaveChangesAsync();
 
-        // TODO: Add ASP role service call here
+        var user = await _userManager.FindByIdAsync(applicationUserId.ToString());
+        if (user is not null)
+        {
+            var isInRole = await _userManager.IsInRoleAsync(user, "Manager");
+            if (!isInRole)
+            {
+                var roleResult = await _userManager.AddToRoleAsync(user, "Manager");
+                if (!roleResult.Succeeded)
+                {
+                    _logger.LogWarning("Failed to add Manager role to user {UserId} when adding to team {TeamId}. Errors: {Errors}", applicationUserId, team.TeamId, string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+                }
+            }
+        }
 
         return ServiceResult.Success();
     }
@@ -328,7 +341,25 @@ public class TeamService : ITeamService
         _context.TeamManagers.Remove(teamManager);
         await _context.SaveChangesAsync();
 
-        // TODO: Remove ASP role service call here
+        var user = await _userManager.FindByIdAsync(applicationUserId.ToString());
+        if (user is not null)
+        {
+            var isInRole = await _userManager.IsInRoleAsync(user, "Manager");
+            if (isInRole)
+            {
+                var hasOtherTeams = await _context.TeamManagers
+                    .AnyAsync(x => x.ApplicationUserId == applicationUserId);
+                
+                if (!hasOtherTeams)
+                {
+                    var roleResult = await _userManager.RemoveFromRoleAsync(user, "Manager");
+                    if (!roleResult.Succeeded)
+                    {
+                        _logger.LogWarning("Failed to remove Manager role from user {UserId} when removing from team {TeamId}. Errors: {Errors}", applicationUserId, team.TeamId, string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+                    }
+                }
+            }
+        }
 
         return ServiceResult.Success();
     }

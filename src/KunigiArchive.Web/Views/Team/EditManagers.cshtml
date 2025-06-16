@@ -1,10 +1,8 @@
 ﻿@model TeamManagerDetailsViewModel
-
 @{
     ViewData["Title"] = $"{Model.TeamName} - Διαχειριστές";
     ViewData["Banner"] = ViewData["Title"];
 }
-
 <div class="row">
     <div class="col-md-6">
         <div class="card shadow-lg border-0 mt-2 h-100">
@@ -14,19 +12,19 @@
                 {
                     <form asp-action="AddManager" asp-route-idOrSlug="@Model.Slug" method="post">
                         <div class="mb-4">
-                            <label for="userSearchInput" class="form-label fw-semibold">Αναζήτηση χρήστη</label>
-                            <input type="text" id="userSearchInput" class="form-control form-control-lg" />
-                        </div>
-                        <div class="mb-4">
-                            <label for="userSelect" class="form-label fw-semibold">Επιλογή Χρήστη</label>
-                            <select name="userId" id="userSelect" class="form-select form-select-lg">
-                                @foreach (var user in Model.AvailableUsers)
-                                {
-                                    <option value="@user.ApplicationUserId" data-email="@user.Email.ToLower()">
-                                        @user.Email
-                                    </option>
-                                }
-                            </select>
+                            <label for="userSearchInput" class="form-label fw-semibold">Αναζήτηση και Επιλογή Χρήστη</label>
+                            <div class="position-relative">
+                                <input type="text" id="userSearchInput" class="form-control form-control-lg" placeholder="Πληκτρολογήστε για αναζήτηση..." autocomplete="off" />
+                                <input type="hidden" name="userId" id="selectedUserId" />
+                                <div id="userDropdown" class="position-absolute w-100 bg-white border rounded shadow-sm" style="top: 100%; left: 0; z-index: 1000; display: none; max-height: 200px; overflow-y: auto;">
+                                    @foreach (var user in Model.AvailableUsers)
+                                    {
+                                        <div class="dropdown-item px-3 py-2" style="cursor: pointer;" data-value="@user.ApplicationUserId" data-email="@user.Email.ToLower()">
+                                            @user.Email
+                                        </div>
+                                    }
+                                </div>
+                            </div>
                         </div>
                         <div class="d-grid gap-2">
                             <button type="submit" class="btn btn-primary btn-lg">Προσθήκη Διαχειριστή</button>
@@ -76,26 +74,75 @@
         </div>
     </div>
 </div>
-
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('userSearchInput');
-            const userSelect = document.getElementById('userSelect');
-            const options = Array.from(userSelect.options);
+            const dropdown = document.getElementById('userDropdown');
+            const hiddenInput = document.getElementById('selectedUserId');
+            const dropdownItems = Array.from(dropdown.children);
             
             searchInput.addEventListener('input', function() {
                 const searchTerm = this.value.toLowerCase();
+                let hasVisibleItems = false;
                 
-                options.forEach(option => {
-                    const email = option.getAttribute('data-email');
+                dropdownItems.forEach(item => {
+                    const email = item.getAttribute('data-email');
                     const matches = email.includes(searchTerm);
-                    option.style.display = matches ? '' : 'none';
+                    item.style.display = matches ? 'block' : 'none';
+                    if (matches) hasVisibleItems = true;
                 });
                 
-                const visibleOptions = options.filter(opt => opt.style.display !== 'none');
-                if (visibleOptions.length > 0) {
-                    visibleOptions[0].selected = true;
+                if (hasVisibleItems && searchTerm.length > 0) {
+                    dropdown.style.display = 'block';
+                } else {
+                    dropdown.style.display = 'none';
+                }
+                
+                // Clear selection if text doesn't match exactly
+                hiddenInput.value = '';
+            });
+            
+            searchInput.addEventListener('focus', function() {
+                if (this.value.length > 0) {
+                    dropdown.style.display = 'block';
+                }
+            });
+            
+            // Handle dropdown item clicks
+            dropdownItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const email = this.textContent.trim();
+                    const value = this.getAttribute('data-value');
+                    
+                    searchInput.value = email;
+                    hiddenInput.value = value;
+                    dropdown.style.display = 'none';
+                });
+                
+                // Add hover effect
+                item.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#f8f9fa';
+                });
+                
+                item.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                });
+            });
+            
+            // Hide dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.style.display = 'none';
+                }
+            });
+            
+            // Form validation
+            const form = searchInput.closest('form');
+            form.addEventListener('submit', function(e) {
+                if (!hiddenInput.value) {
+                    e.preventDefault();
+                    alert('Παρακαλώ επιλέξτε έναν χρήστη από τη λίστα');
                 }
             });
         });

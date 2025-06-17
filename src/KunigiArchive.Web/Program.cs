@@ -53,6 +53,7 @@ builder.Services.ConfigureApplicationCookie(options =>
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<ITeamService, TeamService>();
+builder.Services.AddScoped<IGameService, GameService>();
 
 var app = builder.Build();
 

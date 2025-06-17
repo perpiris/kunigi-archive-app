@@ -1,8 +1,10 @@
 ﻿using KunigiArchive.Application.Services;
+using KunigiArchive.Application.Utilities;
 using KunigiArchive.Contracts.User;
 using KunigiArchive.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -19,8 +21,9 @@ public class DataSeed
         var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
         var logger = scope.ServiceProvider.GetRequiredService<ILogger<DataSeed>>();
         var accountService = scope.ServiceProvider.GetRequiredService<IAccountService>();
+        var context = serviceProvider.GetRequiredService<DataContext>();
         
-        // Seed app Roles
+        // seed app roles
         string[] roles = ["Admin", "Manager"];
         
         foreach (var role in roles)
@@ -35,7 +38,7 @@ public class DataSeed
             }
         }
         
-        // Seed main admins
+        // seed main admins
         var adminEmailsString = configuration["INITIAL_ADMIN_USERS"];
         if (string.IsNullOrWhiteSpace(adminEmailsString))
         {
@@ -68,5 +71,25 @@ public class DataSeed
                 }
             }
         }
+        
+        // seed game types
+        if (await context.GameTypes.AnyAsync()) return;
+
+        var gameTypes = new List<GameType>
+        {
+            new() { Label = "Χωρός", Slug = SlugGenerator.GenerateSlug("Χωρός") },
+            new() { Label = "Σάββατο", Slug = SlugGenerator.GenerateSlug("Σάββατο") },
+            new() { Label = "Κυριακή", Slug = SlugGenerator.GenerateSlug("Κυριακή") },
+            new() { Label = "Διαδικτυακό", Slug = SlugGenerator.GenerateSlug("Διαδικτυακό") },
+            new() { Label = "Παιδικό", Slug = SlugGenerator.GenerateSlug("Παιδικό") },
+            new() { Label = "Εφηβικό", Slug = SlugGenerator.GenerateSlug("Εφηβικό") }
+        };
+
+        foreach (var gameType in gameTypes)
+        {
+            context.GameTypes.Add(gameType);
+        }
+
+        await context.SaveChangesAsync();
     }
 }

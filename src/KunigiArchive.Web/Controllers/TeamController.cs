@@ -21,7 +21,7 @@ public class TeamController : Controller
 
     public async Task<IActionResult> Index(
         int pageNumber = 1, 
-        int pageSize = 6, 
+        int pageSize = 8, 
         string? searchTerm = null)
     {
         var data = 

@@ -28,24 +28,22 @@
 
 @if (Model.Items.Any())
 {
-    <div id="masonry-grid" class="row g-4">
+    <div class="index-image-grid">
         @foreach (var team in Model.Items)
         {
-            <div class="col-sm-6 col-lg-4 col-xl-3">
-                <a asp-controller="Team" asp-action="Details" asp-route-idOrSlug="@team.Slug" class="grid-item-link text-decoration-none">
-                    @if (string.IsNullOrEmpty(team.LogoLink))
-                    {
-                        <img src="~/images/profile.jpg" class="img-fluid rounded" alt="Default Team Image">
-                    }
-                    else
-                    {
-                        <img src="~/@Url.Content(team.LogoLink)" class="img-fluid rounded" alt="@team.Name">
-                    }
-                    <div class="card-overlay">
-                        <h5 class="card-title text-center mb-0">@team.Name</h5>
-                    </div>
-                </a>
-            </div>
+            <a asp-controller="Team" asp-action="Details" asp-route-idOrSlug="@team.Slug" class="grid-item">
+                @if (string.IsNullOrEmpty(team.LogoLink))
+                {
+                    <img src="~/images/profile.jpg" class="grid-item-image" alt="Default Team Image">
+                }
+                else
+                {
+                    <img src="~/@Url.Content(team.LogoLink)" class="grid-item-image" alt="@team.Name">
+                }
+                <div class="grid-item-overlay">
+                    <h5 class="grid-item-title">@team.Name</h5>
+                </div>
+            </a>
         }
     </div>
 
@@ -71,24 +69,4 @@
 else
 {
     <p class="text-center text-muted mt-4">Δεν βρέθηκαν αποτελέσματα.</p>
-}
-
-
-@section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
-    <script src="https://unpkg.com/imagesloaded@5/imagesloaded.pkgd.min.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            let masonryContainer = document.querySelector('#masonry-grid');
-            if (masonryContainer) {
-                imagesLoaded(masonryContainer, function () {
-                    let msnry = new Masonry(masonryContainer, {
-                        itemSelector: '.col-sm-6', 
-                        percentPosition: true
-                    });
-                });
-            }
-        });
-    </script>
 }

@@ -36,41 +36,60 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-.grid-item-link {
+.index-image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.grid-item {
   position: relative;
   display: block;
+  height: 0;
+  padding-top: 100%;
   overflow: hidden;
-  border-radius: var(--bs-border-radius);
+  border-radius: 0.5rem;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  transition: box-shadow 0.3s ease;
+  text-decoration: none;
+  background-color: #f0f0f0;
 }
 
-.grid-item-link:hover {
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-}
-
-.card-overlay {
+.grid-item-image {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.65);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.grid-item-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.7);
   color: white;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
 }
 
-.grid-item-link:hover .card-overlay {
+.grid-item:hover .grid-item-image {
+  opacity: 0.5;
+}
+
+.grid-item:hover .grid-item-overlay {
   opacity: 1;
 }
 
-.grid-item-link .img-fluid {
-  width: 100%;
-  height: auto;
-  display: block;
+.grid-item-title {
+  font-weight: bold;
+  margin: 0;
+  padding: 1rem;
+  text-align: center;
 }

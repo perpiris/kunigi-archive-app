@@ -1,5 +1,6 @@
 ﻿using KunigiArchive.Application.Services;
 using KunigiArchive.Web.Mappings;
+using KunigiArchive.Web.ViewModels.Game;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,9 +11,10 @@ public class GameController : Controller
 {
     private readonly IGameService _gameService;
 
-    public GameController(IGameService gameService)
+    public GameController(IGameService gameService, ITeamService teamService)
     {
         ArgumentNullException.ThrowIfNull(gameService);
+        ArgumentNullException.ThrowIfNull(teamService);
         
         _gameService = gameService;
     }
@@ -53,5 +55,44 @@ public class GameController : Controller
 
         var viewModel = data.MapToPaginatedViewModel();
         return View(viewModel);
+    }
+    
+    [HttpGet("create")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Create()
+    {
+        var viewModel = new MasterGameCreateViewModel();
+        await PrepareMasterGameCreateViewModelAsync(viewModel);
+        return View(viewModel);
+    }
+    
+    [HttpPost("create")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Create(MasterGameCreateViewModel viewModel)
+    {
+        if (!ModelState.IsValid)
+        {
+            await PrepareMasterGameCreateViewModelAsync(viewModel);
+            return View(viewModel);
+        }
+
+        var result = await _gameService.CreateMasterGameAsync(viewModel.MapToCreateRequest(), ModelState);
+        if (!result.IsSuccess)
+        {
+            await PrepareMasterGameCreateViewModelAsync(viewModel);
+            return View(viewModel);
+        }
+
+        TempData["success-alert"] = "Το παιχνίδι δημιουργήθηκε επιτυχώς.";
+        return RedirectToAction(nameof(Manage));
+    }
+    
+    private async Task PrepareMasterGameCreateViewModelAsync(MasterGameCreateViewModel viewModel)
+    {
+        var (hostTeams, winnerTeams, gameTypes) = await _gameService.GetCreateMasterGameSelectListsAsync();
+        
+        viewModel.HostTeamList = hostTeams;
+        viewModel.WinnerTeamList = winnerTeams;
+        viewModel.GameTypeList = gameTypes;
     }
 }

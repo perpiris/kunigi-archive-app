@@ -1,0 +1,291 @@
+﻿@model MasterGameCreateViewModel
+
+@{
+    ViewData["Title"] = "Δημιουργία νέου κυνηγιού";
+    ViewData["Banner"] = "Δημιουργία νέου κυνηγιού";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-lg border-0 mt-2">
+            <div class="card-body p-5">
+                <form asp-action="Create" asp-controller="Game" method="post" autocomplete="off">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-4">
+                                <label asp-for="Title" class="form-label fw-semibold"></label>
+                                <input asp-for="Title" class="form-control form-control-lg"/>
+                                <span asp-validation-for="Title" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="mb-4">
+                                <label asp-for="Year" class="form-label fw-semibold"></label>
+                                <input asp-for="Year" class="form-control form-control-lg" type="number"/>
+                                <span asp-validation-for="Year" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div class="mb-4">
+                                <label asp-for="Order" class="form-label fw-semibold"></label>
+                                <input asp-for="Order" class="form-control form-control-lg" type="number"/>
+                                <span asp-validation-for="Order" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <label asp-for="HostTeamId" class="form-label fw-semibold"></label>
+                                <div class="position-relative">
+                                    <input type="text" id="hostTeamSearchInput" class="form-control form-control-lg" placeholder="Αναζήτηση..." autocomplete="off" />
+                                    <input type="hidden" asp-for="HostTeamId" id="selectedHostTeamId" />
+                                    <div id="hostTeamDropdown" class="position-absolute w-100 bg-white border rounded shadow-sm" style="top: 100%; left: 0; z-index: 1000; display: none; max-height: 200px; overflow-y: auto;">
+                                        @foreach (var team in Model.HostTeamList)
+                                        {
+                                            <div class="dropdown-item px-3 py-2" style="cursor: pointer;" data-value="@team.Value" data-name="@team.Text.ToLower()">
+                                                @team.Text
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <span asp-validation-for="HostTeamId" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <label asp-for="WinnerTeamId" class="form-label fw-semibold"></label>
+                                <div class="position-relative">
+                                    <input type="text" id="winnerTeamSearchInput" class="form-control form-control-lg" placeholder="Αναζήτηση..." autocomplete="off" />
+                                    <input type="hidden" asp-for="WinnerTeamId" id="selectedWinnerTeamId" />
+                                    <div id="winnerTeamDropdown" class="position-absolute w-100 bg-white border rounded shadow-sm" style="top: 100%; left: 0; z-index: 1000; display: none; max-height: 200px; overflow-y: auto;">
+                                        @foreach (var team in Model.WinnerTeamList)
+                                        {
+                                            <div class="dropdown-item px-3 py-2" style="cursor: pointer;" data-value="@team.Value" data-name="@team.Text.ToLower()">
+                                                @team.Text
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <span asp-validation-for="WinnerTeamId" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold">Τύποι Παιχνιδιών</label>
+                                <div class="border rounded p-3">
+                                    @foreach (var gameType in Model.GameTypeList)
+                                    {
+                                        <div class="dropdown-item px-3 py-2" style="cursor: pointer;" data-value="@gameType.Value">
+                                            @gameType.Text
+                                        </div>
+                                    }
+                                </div>
+                                <div class="mt-2" id="selectedGameTypesContainer">
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 mt-4">
+                        <a asp-controller="Game" asp-action="Manage" class="btn btn-secondary btn-lg">Πίσω</a>
+                        <button type="submit" class="btn btn-primary btn-lg">Αποθήκευση</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Host Team Search Functionality
+            setupTeamSearch('hostTeamSearchInput', 'hostTeamDropdown', 'selectedHostTeamId');
+
+            // Winner Team Search Functionality
+            setupTeamSearch('winnerTeamSearchInput', 'winnerTeamDropdown', 'selectedWinnerTeamId');
+
+            // Game Type Search and Selection
+            setupGameTypeSearch();
+
+            function setupTeamSearch(searchInputId, dropdownId, hiddenInputId) {
+                const searchInput = document.getElementById(searchInputId);
+                const dropdown = document.getElementById(dropdownId);
+                const hiddenInput = document.getElementById(hiddenInputId);
+                const dropdownItems = Array.from(dropdown.children);
+
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    let hasVisibleItems = false;
+
+                    dropdownItems.forEach(item => {
+                        const teamName = item.getAttribute('data-name');
+                        const matches = teamName.includes(searchTerm);
+                        item.style.display = matches ? 'block' : 'none';
+                        if (matches) hasVisibleItems = true;
+                    });
+
+                    if (hasVisibleItems && searchTerm.length > 0) {
+                        dropdown.style.display = 'block';
+                    } else {
+                        dropdown.style.display = 'none';
+                    }
+
+                    // Clear selection if text doesn't match exactly
+                    hiddenInput.value = '';
+                });
+
+                searchInput.addEventListener('focus', function() {
+                    if (this.value.length > 0) {
+                        dropdown.style.display = 'block';
+                    }
+                });
+
+                // Handle dropdown item clicks
+                dropdownItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        const teamName = this.textContent.trim();
+                        const value = this.getAttribute('data-value');
+
+                        searchInput.value = teamName;
+                        hiddenInput.value = value;
+                        dropdown.style.display = 'none';
+                    });
+
+                    // Add hover effect
+                    item.addEventListener('mouseenter', function() {
+                        this.style.backgroundColor = '#f8f9fa';
+                    });
+
+                    item.addEventListener('mouseleave', function() {
+                        this.style.backgroundColor = '';
+                    });
+                });
+
+                // Hide dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                        dropdown.style.display = 'none';
+                    }
+                });
+            }
+
+            function setupGameTypeSearch() {
+                const searchInput = document.getElementById('gameTypeSearchInput');
+                const dropdown = document.getElementById('gameTypeDropdown');
+                const container = document.getElementById('selectedGameTypesContainer');
+                const dropdownItems = Array.from(dropdown.children);
+                let selectedGameTypes = new Set();
+
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    let hasVisibleItems = false;
+
+                    dropdownItems.forEach(item => {
+                        const gameTypeName = item.getAttribute('data-name');
+                        const matches = gameTypeName.includes(searchTerm);
+                        item.style.display = matches ? 'block' : 'none';
+                        if (matches) hasVisibleItems = true;
+                    });
+
+                    if (hasVisibleItems && searchTerm.length > 0) {
+                        dropdown.style.display = 'block';
+                    } else {
+                        dropdown.style.display = 'none';
+                    }
+                });
+
+                searchInput.addEventListener('focus', function() {
+                    if (this.value.length > 0) {
+                        dropdown.style.display = 'block';
+                    }
+                });
+
+                // Handle dropdown item clicks
+                dropdownItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        const gameTypeName = this.textContent.trim();
+                        const value = this.getAttribute('data-value');
+
+                        // Add to selected set
+                        if (!selectedGameTypes.has(value)) {
+                            selectedGameTypes.add(value);
+                            addSelectedGameType(value, gameTypeName);
+                            searchInput.value = '';
+                            dropdown.style.display = 'none';
+                        }
+                    });
+
+                    // Add hover effect
+                    item.addEventListener('mouseenter', function() {
+                        this.style.backgroundColor = '#f8f9fa';
+                    });
+
+                    item.addEventListener('mouseleave', function() {
+                        this.style.backgroundColor = '';
+                    });
+                });
+
+                // Hide dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                        dropdown.style.display = 'none';
+                    }
+                });
+
+                function addSelectedGameType(gameTypeId, gameTypeName) {
+                    const gameTypeDiv = document.createElement('div');
+                    gameTypeDiv.className = 'badge bg-primary me-2 mb-2 d-inline-flex align-items-center';
+                    gameTypeDiv.innerHTML = `
+                        <span>${gameTypeName}</span>
+                        <button type="button" class="btn-close btn-close-white ms-2" style="font-size: 0.8em;" onclick="removeGameType('${gameTypeId}')"></button>
+                        <input type="hidden" name="SelectedGameTypeIds" value="${gameTypeId}" />
+                    `;
+                    gameTypeDiv.setAttribute('data-game-type-id', gameTypeId);
+                    container.appendChild(gameTypeDiv);
+                }
+
+                // Make removeGameType globally available
+                window.removeGameType = function(gameTypeId) {
+                    const gameTypeDiv = container.querySelector(`[data-game-type-id="${gameTypeId}"]`);
+                    if (gameTypeDiv) {
+                        gameTypeDiv.remove();
+                        selectedGameTypes.delete(gameTypeId);
+                    }
+                };
+            }
+
+            // Form validation
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(e) {
+                const hostTeamId = document.getElementById('selectedHostTeamId').value;
+                const winnerTeamId = document.getElementById('selectedWinnerTeamId').value;
+
+                if (!hostTeamId) {
+                    e.preventDefault();
+                    alert('Παρακαλώ επιλέξτε διοργανώτρια ομάδα');
+                    return;
+                }
+
+                if (!winnerTeamId) {
+                    e.preventDefault();
+                    alert('Παρακαλώ επιλέξτε νικήτρια ομάδα');
+                    return;
+                }
+            });
+        });
+    </script>
+}

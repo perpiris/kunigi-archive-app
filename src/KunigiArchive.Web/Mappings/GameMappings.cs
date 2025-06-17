@@ -21,7 +21,8 @@ public static class GameMappings
             HostTeamName = response.HostTeamName,
             WinnerTeamId = response.WinnerTeamId,
             WinnerTeamName = response.WinnerTeamName,
-            LogoLink = response.LogoLink
+            LogoLink = response.LogoLink,
+            IsArchived = response.IsArchived
         };
     }
     
@@ -33,6 +34,19 @@ public static class GameMappings
             CurrentPage = paginatedResponse.CurrentPage,
             PageSize = paginatedResponse.PageSize,
             TotalPages = paginatedResponse.TotalPages
+        };
+    }
+
+    public static MasterGameCreateRequest MapToCreateRequest(this MasterGameCreateViewModel viewModel)
+    {
+        return new MasterGameCreateRequest
+        {
+            Title = viewModel.Title,
+            Year = viewModel.Year,
+            Order = viewModel.Order,
+            HostTeamId = viewModel.HostTeamId,
+            WinnerTeamId = viewModel.WinnerTeamId,
+            GameTypeIds = viewModel.SelectedGameTypeIds
         };
     }
 }

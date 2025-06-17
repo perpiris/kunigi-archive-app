@@ -16,12 +16,13 @@ public class DataSeed
     public static async Task Seed(IServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-        var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
-        var logger = scope.ServiceProvider.GetRequiredService<ILogger<DataSeed>>();
-        var accountService = scope.ServiceProvider.GetRequiredService<IAccountService>();
-        var context = serviceProvider.GetRequiredService<DataContext>();
+        var scopedServices = scope.ServiceProvider;
+        var roleManager = scopedServices.GetRequiredService<RoleManager<ApplicationRole>>();
+        var userManager = scopedServices.GetRequiredService<UserManager<ApplicationUser>>();
+        var configuration = scopedServices.GetRequiredService<IConfiguration>();
+        var logger = scopedServices.GetRequiredService<ILogger<DataSeed>>();
+        var accountService = scopedServices.GetRequiredService<IAccountService>();
+        var context = scopedServices.GetRequiredService<DataContext>();
         
         // seed app roles
         string[] roles = ["Admin", "Manager"];
@@ -73,7 +74,10 @@ public class DataSeed
         }
         
         // seed game types
-        if (await context.GameTypes.AnyAsync()) return;
+        if (await context.GameTypes.AnyAsync())
+        {
+            return;
+        }
 
         var gameTypes = new List<GameType>
         {

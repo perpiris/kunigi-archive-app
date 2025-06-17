@@ -1,0 +1,72 @@
+﻿@model PaginatedViewModel<MasterGameDetailsViewModel>
+
+@{
+    ViewData["Title"] = "Παιχνίδια";
+    ViewData["Banner"] = "Όλα τα παιχνίδια";
+    var searchTerm = ViewBag.SearchTerm ?? "";
+}
+
+@if (Model.Items.Any() || !string.IsNullOrEmpty(searchTerm))
+{
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <form asp-controller="Game" asp-action="Index" method="get" class="d-flex flex-grow-1">
+            <input type="hidden" name="pageNumber" value="1" />
+            <input type="hidden" name="pageSize" value="@Model.PageSize" />
+            <div class="input-group me-3" style="max-width: 400px;">
+                <input type="text" name="searchTerm" value="@searchTerm" class="form-control" placeholder="Αναζήτηση ομάδας..." />
+                <button type="submit" class="btn btn-outline-secondary">
+                    <i class="bi bi-search"></i>
+                </button>
+            </div>
+        </form>
+        @if (!string.IsNullOrEmpty(searchTerm))
+        {
+            <a asp-controller="Game" asp-action="Index" class="btn btn-secondary">Καθαρισμός</a>
+        }
+    </div>
+}
+
+@if (Model.Items.Any())
+{
+    <div class="index-image-grid">
+        @foreach (var game in Model.Items)
+        {
+            <a asp-controller="Team" asp-action="Details" asp-route-idOrYear="@game.Year" class="grid-item">
+                @if (string.IsNullOrEmpty(game.LogoLink))
+                {
+                    <img src="~/images/profile.jpg" class="grid-item-image" alt="Default Team Image">
+                }
+                else
+                {
+                    <img src="~/@Url.Content(game.LogoLink)" class="grid-item-image" alt="@game.Title">
+                }
+                <div class="grid-item-overlay">
+                    <h5 class="grid-item-title">@game.GetCompleteTitle()</h5>
+                </div>
+            </a>
+        }
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                @for (var i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a class="page-link"
+                           asp-controller="Game"
+                           asp-action="Index"
+                           asp-route-pageNumber="@i"
+                           asp-route-pageSize="@Model.PageSize"
+                           asp-route-searchTerm="@searchTerm">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
+}
+else
+{
+    <p class="text-center text-muted mt-4">Δεν βρέθηκαν αποτελέσματα.</p>
+}

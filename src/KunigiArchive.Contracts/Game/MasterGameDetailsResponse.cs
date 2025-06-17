@@ -1,11 +1,11 @@
-﻿namespace KunigiArchive.Domain.Entities;
+﻿namespace KunigiArchive.Contracts.Game;
 
-public class MasterGame
+public class MasterGameDetailsResponse
 {
-    public long MasterGameId { get; set; }
-
+    public required long MasterGameId { get; set; }
+    
     public required int Year { get; set; }
-
+    
     public required int Order { get; set; }
     
     public required string Title { get; set; }
@@ -15,16 +15,14 @@ public class MasterGame
     public string? Description { get; set; }
     
     public bool IsArchived { get; set; } = true;
-
+    
     public long HostTeamId { get; set; }
+    
+    public required string HostTeamName { get; set; }
     
     public long WinnerTeamId { get; set; }
     
-    public string? LogoLink { get; set; }
-
-    public Team HostTeam { get; set; } = null!;
+    public required string WinnerTeamName { get; set; }
     
-    public Team WinnerTeam { get; set; } = null!;
-
-    public ICollection<Game> Games { get; set; } = new List<Game>();
+    public string? LogoLink { get; set; }
 }

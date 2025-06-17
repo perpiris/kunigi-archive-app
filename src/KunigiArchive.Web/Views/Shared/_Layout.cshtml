@@ -29,6 +29,9 @@
                     <li class="nav-item">
                         <a class="nav-link @IsActive("Team", "Index")" asp-controller="Team" asp-action="Index">Ομάδες</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link @IsActive("Game", "Index")" asp-controller="Game" asp-action="Index">Παιχνίδια</a>
+                    </li>
                     @if (User.Identity is { IsAuthenticated: true } && (User.IsInRole("Admin") || User.IsInRole("Manager")))
                     {
                         <li class="nav-item">

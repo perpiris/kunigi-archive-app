@@ -119,8 +119,8 @@ public class GameService : IGameService
 
         var newMasterGame = new MasterGame
         {
-            Title = request.Title.Trim(),
-            SubTitle = $"{request.Order}ο Κυνήθι Θησαυρού",
+            SubTitle = request.SubTitle.Trim(),
+            Title = $"{request.Order}ο Κυνήγι Θησαυρού",
             Year = request.Year!.Value,
             Order = request.Order!.Value,
             HostTeamId = request.HostTeamId,

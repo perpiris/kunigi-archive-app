@@ -9,7 +9,7 @@ public class MasterGameCreateViewModel
     [DisplayName("Τίτλος")]
     [Required(ErrorMessage = "Το πεδίο απαιτείται.")]
     [StringLength(500)]
-    public string Title { get; set; } = null!;
+    public string SubTitle { get; set; } = null!;
 
     [DisplayName("Έτος")]
     [Required(ErrorMessage = "Το πεδίο απαιτείται.")]

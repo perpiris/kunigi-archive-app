@@ -41,7 +41,7 @@ public static class GameMappings
     {
         return new MasterGameCreateRequest
         {
-            Title = viewModel.Title,
+            SubTitle = viewModel.SubTitle,
             Year = viewModel.Year,
             Order = viewModel.Order,
             HostTeamId = viewModel.HostTeamId,

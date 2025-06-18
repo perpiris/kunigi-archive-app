@@ -2,7 +2,7 @@
 
 public class MasterGameCreateRequest
 {
-    public required string Title { get; set; }
+    public required string SubTitle { get; set; }
     
     public int? Year { get; set; }
     

@@ -27,4 +27,6 @@ public class MasterGame
     public Team WinnerTeam { get; set; } = null!;
 
     public ICollection<Game> Games { get; set; } = new List<Game>();
+    
+    public ICollection<MasterGameMediaFile> MediaFiles { get; set; } = new List<MasterGameMediaFile>();
 }

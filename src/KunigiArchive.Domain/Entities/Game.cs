@@ -19,4 +19,8 @@ public class Game
     public MasterGame MasterGame { get; set; } = null!;
 
     public GameType GameType { get; set; } = null!;
+    
+    public ICollection<Puzzle> Puzzles { get; set; } = new List<Puzzle>();
+    
+    public ICollection<GameMediaFile> MediaFiles { get; set; } = new List<GameMediaFile>();
 }

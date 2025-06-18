@@ -27,4 +27,6 @@ public class Team
     public string? LogoLink { get; set; }
     
     public ICollection<TeamManager> Managers { get; set; } = new List<TeamManager>();
+    
+    public ICollection<TeamMediaFile> MediaFiles { get; set; } = new List<TeamMediaFile>();
 }

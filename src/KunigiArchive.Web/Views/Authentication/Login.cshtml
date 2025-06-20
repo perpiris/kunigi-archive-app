@@ -6,26 +6,22 @@
 }
 
 <div class="row justify-content-center">
-    <div class="col-md-5 col-lg-4">
-        <div class="card shadow-lg border-0 mt-2">
-            <div class="card-body p-5">
-                
+    <div class="col-md-4">
+        <div class="card shadow-lg border-0 mt-2 p-2">
+            <div class="card-body p-4">
                 <form asp-action="Login" method="post">
-
-                    <div class="mb-4">
+                    <div class="mb-3">
                         <label asp-for="Email" class="form-label fw-semibold"></label>
-                        <input asp-for="Email" class="form-control form-control-lg" />
+                        <input asp-for="Email" class="form-control" />
                         <span asp-validation-for="Email" class="text-danger small"></span>
                     </div>
-
-                    <div class="mb-4">
+                    <div class="mb-3">
                         <label asp-for="Password" class="form-label fw-semibold"></label>
-                        <input asp-for="Password" class="form-control form-control-lg" type="password" placeholder="••••••••"/>
+                        <input asp-for="Password" class="form-control" type="password" placeholder="••••••••"/>
                         <span asp-validation-for="Password" class="text-danger small"></span>
                     </div>
-
                     <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-lg">Σύνδεση</button>
+                        <button type="submit" class="btn btn-primary">Σύνδεση</button>
                     </div>
                 </form>
             </div>

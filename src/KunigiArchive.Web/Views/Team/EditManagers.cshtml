@@ -1,150 +1,125 @@
-﻿@model TeamManagerDetailsViewModel
+﻿@model TeamManagerEditViewModel
+
 @{
-    ViewData["Title"] = $"{Model.TeamName} - Διαχειριστές";
-    ViewData["Banner"] = ViewData["Title"];
+    ViewData["Title"] = $"Διαχείριση Διαχειριστών: {Model.TeamName}";
+    ViewData["Banner"] = Model.TeamName;
 }
+
 <div class="row">
     <div class="col-md-6">
-        <div class="card shadow-lg border-0 mt-2 h-100">
-            <div class="card-body p-5">
+        <div class="card shadow-lg border-0 mt-2 p-2">
+            <div class="card-body p-4">
                 <h5 class="mb-4">Προσθήκη Διαχειριστή</h5>
-                @if (Model.AvailableUsers.Any())
+
+                @if (Model.AvailableUsers != null && Model.AvailableUsers.Count() > 1)
                 {
-                    <form asp-action="AddManager" asp-route-idOrSlug="@Model.Slug" method="post">
-                        <div class="mb-4">
-                            <label for="userSearchInput" class="form-label fw-semibold">Αναζήτηση και Επιλογή Χρήστη</label>
-                            <div class="position-relative">
-                                <input type="text" id="userSearchInput" class="form-control form-control-lg" placeholder="Πληκτρολογήστε για αναζήτηση..." autocomplete="off" />
-                                <input type="hidden" name="userId" id="selectedUserId" />
-                                <div id="userDropdown" class="position-absolute w-100 bg-white border rounded shadow-sm" style="top: 100%; left: 0; z-index: 1000; display: none; max-height: 200px; overflow-y: auto;">
-                                    @foreach (var user in Model.AvailableUsers)
-                                    {
-                                        <div class="dropdown-item px-3 py-2" style="cursor: pointer;" data-value="@user.ApplicationUserId" data-email="@user.Email.ToLower()">
-                                            @user.Email
-                                        </div>
-                                    }
-                                </div>
-                            </div>
+                    <form asp-action="AddManager" asp-controller="Team" asp-route-idOrSlug="@Model.Slug" method="post" autocomplete="off" novalidate>
+                        <div class="mb-3">
+                            <label asp-for="SelectedUserId" class="form-label fw-semibold">Επιλογή χρήστη</label>
+                            <select asp-for="SelectedUserId" asp-items="@Model.AvailableUsers" class="form-select" required></select>
+                            <span asp-validation-for="SelectedUserId" class="text-danger"></span>
                         </div>
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">Προσθήκη Διαχειριστή</button>
-                            <a asp-action="Actions" asp-route-idOrSlug="@Model.Slug" class="btn btn-secondary btn-lg">Επιστροφή</a>
+                        <div class="d-flex justify-content-end gap-2">
+                            <a asp-controller="Team" asp-action="Actions" asp-route-idOrSlug="@Model.Slug" class="btn btn-secondary">Πίσω</a>
+                            <button type="submit" class="btn btn-primary">Προσθήκη</button>
                         </div>
                     </form>
                 }
                 else
                 {
-                    <div class="text-center py-4">
-                        <p class="text-muted mt-3">Δεν υπάρχουν διαθέσιμοι χρήστες για προσθήκη ως διαχειριστές.</p>
-                        <div class="d-grid">
-                            <a asp-action="Actions" asp-route-idOrSlug="@Model.Slug" class="btn btn-secondary btn-lg mt-2">Επιστροφή</a>
-                        </div>
+                    <div class="text-muted text-center py-4 mb-3">
+                        Δεν υπάρχουν διαθέσιμοι χρήστες για προσθήκη
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <a asp-controller="Team" asp-action="Actions" asp-route-idOrSlug="@Model.Slug" class="btn btn-secondary">Πίσω</a>
                     </div>
                 }
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-6">
-        <div class="card shadow-lg border-0 mt-2 h-100">
-            <div class="card-body p-5">
+        <div class="card shadow-lg border-0 mt-2 p-2">
+            <div class="card-body p-4">
                 <h5 class="mb-4">Τρέχοντες Διαχειριστές</h5>
                 @if (Model.CurrentManagers.Any())
                 {
-                    <div class="list-group">
+                    <div class="manager-list">
                         @foreach (var manager in Model.CurrentManagers)
                         {
-                            <div class="list-group-item d-flex justify-content-between align-items-center py-3">
-                                <span>@manager.Email</span>
-                                <form asp-action="RemoveManager" asp-route-idOrSlug="@Model.Slug" method="post">
-                                    <input type="hidden" name="userId" value="@manager.ApplicationUserId"/>
-                                    <button type="submit" class="btn btn-danger">Αφαίρεση</button>
-                                </form>
+                            <div class="card border-light mb-3">
+                                <div class="card-body py-3 px-4">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="fw-semibold text-dark">@manager.Email</div>
+                                            @if (manager.Roles != null && manager.Roles.Any())
+                                            {
+                                                <small class="text-muted">@string.Join(", ", manager.Roles)</small>
+                                            }
+                                        </div>
+                                        <button type="button" class="btn btn-outline-danger btn-sm"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#confirmModal"
+                                                data-user-id="@manager.ApplicationUserId"
+                                                data-user-email="@manager.Email">
+                                            Αφαίρεση
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         }
                     </div>
                 }
                 else
                 {
-                    <div class="text-center py-4">
-                        <p class="text-muted mt-3">Δεν υπάρχουν διαχειριστές για αυτή την ομάδα.</p>
+                    <div class="text-muted text-center py-4">
+                        Δεν υπάρχουν διαχειριστές αυτή τη στιγμή
                     </div>
                 }
             </div>
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmModalLabel">Επιβεβαίωση αφαίρεσης</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Είστε σίγουροι ότι θέλετε να αφαιρέσετε τον διαχειριστή <strong id="userEmail"></strong>;
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ακύρωση</button>
+                <form asp-action="RemoveManager" asp-controller="Team" asp-route-idOrSlug="@Model.Slug" method="post" class="d-inline">
+                    <input type="hidden" name="userId" id="userIdToRemove" />
+                    <button type="submit" class="btn btn-danger">Αφαίρεση</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('userSearchInput');
-            const dropdown = document.getElementById('userDropdown');
-            const hiddenInput = document.getElementById('selectedUserId');
-            const dropdownItems = Array.from(dropdown.children);
-            
-            searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase();
-                let hasVisibleItems = false;
-                
-                dropdownItems.forEach(item => {
-                    const email = item.getAttribute('data-email');
-                    const matches = email.includes(searchTerm);
-                    item.style.display = matches ? 'block' : 'none';
-                    if (matches) hasVisibleItems = true;
-                });
-                
-                if (hasVisibleItems && searchTerm.length > 0) {
-                    dropdown.style.display = 'block';
-                } else {
-                    dropdown.style.display = 'none';
-                }
-                
-                // Clear selection if text doesn't match exactly
-                hiddenInput.value = '';
-            });
-            
-            searchInput.addEventListener('focus', function() {
-                if (this.value.length > 0) {
-                    dropdown.style.display = 'block';
-                }
-            });
-            
-            // Handle dropdown item clicks
-            dropdownItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const email = this.textContent.trim();
-                    const value = this.getAttribute('data-value');
+            const confirmModal = document.getElementById('confirmModal');
+            if (confirmModal) {
+                const userEmailSpan = document.getElementById('userEmail');
+                const userIdInput = document.getElementById('userIdToRemove');
+
+                confirmModal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
+                    const userId = button.getAttribute('data-user-id');
                     
-                    searchInput.value = email;
-                    hiddenInput.value = value;
-                    dropdown.style.display = 'none';
+                    userEmailSpan.textContent = button.getAttribute('data-user-email');
+                    userIdInput.value = userId;
                 });
-                
-                // Add hover effect
-                item.addEventListener('mouseenter', function() {
-                    this.style.backgroundColor = '#f8f9fa';
-                });
-                
-                item.addEventListener('mouseleave', function() {
-                    this.style.backgroundColor = '';
-                });
-            });
-            
-            // Hide dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
-                    dropdown.style.display = 'none';
-                }
-            });
-            
-            // Form validation
-            const form = searchInput.closest('form');
-            form.addEventListener('submit', function(e) {
-                if (!hiddenInput.value) {
-                    e.preventDefault();
-                    alert('Παρακαλώ επιλέξτε έναν χρήστη από τη λίστα');
-                }
-            });
+            }
         });
     </script>
 }

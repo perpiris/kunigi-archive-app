@@ -1,48 +1,43 @@
 ﻿@model UserCreateViewModel
+
 @{
     ViewData["Title"] = "Δημιουργία νέου χρήστη";
     ViewData["Banner"] = "Δημιουργία νέου χρήστη";
 }
 
 <div class="row justify-content-center">
-    <div class="col-lg-8">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <!-- Add an ID to the form for easier targeting in JavaScript -->
+    <div class="col-lg-7">
+        <div class="card shadow-lg border-0 mt-2 p-2">
+            <div class="card-body p-4">
                 <form id="createUserForm" asp-action="CreateUser" asp-controller="UserManagement" method="post" autocomplete="off">
-
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="mb-3">
-                                <label asp-for="Email" class="form-label"></label>
-                                <input asp-for="Email" class="form-control"/>
-                                <span asp-validation-for="Email" class="text-danger"></span>
-                            </div>
-
-                            <div class="mb-3">
-                                <label asp-for="SelectedRole" class="form-label d-block"></label>
-                                @foreach (var role in Model.RolesList)
-                                {
-                                    <div class="form-check form-check-inline">
-                                        <input asp-for="SelectedRole" type="radio" value="@role.Value" class="form-check-input" id="role-@role.Value" />
-                                        <label class="form-check-label" for="role-@role.Value">@role.Text</label>
-                                    </div>
-                                }
-                                <span asp-validation-for="SelectedRole" class="text-danger d-block mt-1"></span>
-                            </div>
-
-                            <div class="mb-3" id="team-selection-wrapper" style="display: none;">
-                                <label asp-for="SelectedTeamId" class="form-label"></label>
-                                <select asp-for="SelectedTeamId" asp-items="Model.TeamList" class="form-select">
-                                    <option value="">Επιλέξτε ομάδα</option>
-                                </select>
-                                <!-- The span for our custom JS validation message -->
-                                <span asp-validation-for="SelectedTeamId" class="text-danger"></span>
-                            </div>
-                        </div>
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label fw-semibold"></label>
+                        <input asp-for="Email" class="form-control"/>
+                        <span asp-validation-for="Email" class="text-danger small"></span>
                     </div>
 
-                    <div class="d-flex justify-content-end gap-2 mt-4">
+                    <div class="mb-3">
+                        <label asp-for="SelectedRole" class="form-label fw-semibold d-block"></label>
+                        @foreach (var role in Model.RolesList)
+                        {
+                            <div class="form-check form-check-inline">
+                                <input asp-for="SelectedRole" type="radio" value="@role.Value" class="form-check-input" id="role-@role.Value" />
+                                <label class="form-check-label" for="role-@role.Value">@role.Text</label>
+                            </div>
+                        }
+                        <span asp-validation-for="SelectedRole" class="text-danger small d-block mt-1"></span>
+                    </div>
+
+                    <div class="mb-3" id="team-selection-wrapper" style="display: none;">
+                        <label asp-for="SelectedTeamId" class="form-label fw-semibold"></label>
+                        <select asp-for="SelectedTeamId" asp-items="Model.TeamList" class="form-select">
+                            <option value="">Επιλέξτε ομάδα</option>
+                        </select>
+                        <span asp-validation-for="SelectedTeamId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-3">
                         <a asp-controller="UserManagement" asp-action="Manage" class="btn btn-secondary">Πίσω</a>
                         <button type="submit" class="btn btn-primary">Αποθήκευση</button>
                     </div>
@@ -58,18 +53,15 @@
         $(document).ready(function () {
 
             function toggleTeamSelection() {
-                var selectedRole = $('input[name="SelectedRole"]:checked').val();
-                var teamWrapper = $('#team-selection-wrapper');
-                var teamSelect = $('#SelectedTeamId');
+                let selectedRole = $('input[name="SelectedRole"]:checked').val();
+                let teamWrapper = $('#team-selection-wrapper');
+                let teamSelect = $('#SelectedTeamId');
 
                 if (selectedRole === 'Manager') {
-                    // Change 1: Use show() for an instant, "snappy" appearance
                     teamWrapper.show();
                 } else {
-                    // Change 1: Use hide() for an instant disappearance
                     teamWrapper.hide();
                     teamSelect.val('');
-                    // Clear any validation state if the user switches away from Manager
                     teamSelect.removeClass('is-invalid');
                     teamSelect.siblings('.text-danger').text('');
                 }
@@ -81,22 +73,16 @@
                 toggleTeamSelection();
             });
 
-            // Change 2: Add a submit handler to the form for client-side validation
             $('#createUserForm').submit(function(event) {
-                var selectedRole = $('input[name="SelectedRole"]:checked').val();
-                var teamSelect = $('#SelectedTeamId');
-                var isTeamSelected = teamSelect.val() && teamSelect.val() !== '';
+                let selectedRole = $('input[name="SelectedRole"]:checked').val();
+                let teamSelect = $('#SelectedTeamId');
+                let isTeamSelected = teamSelect.val() && teamSelect.val() !== '';
 
-                // If role is Manager AND no team is selected...
                 if (selectedRole === 'Manager' && !isTeamSelected) {
-                    // ...prevent the form from submitting.
                     event.preventDefault();
-
-                    // Display an error message and add the Bootstrap invalid class.
                     teamSelect.addClass('is-invalid');
                     teamSelect.siblings('.text-danger').text('Η επιλογή ομάδας είναι υποχρεωτική για τον ρόλο Manager.');
                 } else {
-                    // If valid, ensure no error state is shown.
                     teamSelect.removeClass('is-invalid');
                     teamSelect.siblings('.text-danger').text('');
                 }

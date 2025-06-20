@@ -184,13 +184,13 @@ public class TeamController : Controller
             return RedirectToAction("NotFound", "Home");
         }
 
-        var viewModel = teamWithManagers.MapToTeamManagerDetailsViewModel();
+        var viewModel = teamWithManagers.MapToTeamManagerEditViewModel();
         return View(viewModel);
     }
 
     [HttpPost("{idOrSlug}/add-manager")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> AddManager(string idOrSlug, [FromForm] long userId)
+    public async Task<IActionResult> AddManager(string idOrSlug, [FromForm] long selectedUserId)
     {
         var data = await _teamService.GetTeamByIdOrSlugAsync(idOrSlug, false);
         if (data is null)
@@ -199,7 +199,7 @@ public class TeamController : Controller
             return RedirectToAction("NotFound", "Home");
         }
 
-        var result = await _teamService.AddTeamManagerAsync(idOrSlug, userId);
+        var result = await _teamService.AddTeamManagerAsync(idOrSlug, selectedUserId);
         if (result.IsSuccess)
         {
             TempData["success-alert"] = "Ο διαχειριστής προστέθηκε με επιτυχία.";

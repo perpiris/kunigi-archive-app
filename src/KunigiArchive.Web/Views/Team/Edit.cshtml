@@ -1,104 +1,95 @@
 ﻿@model TeamEditViewModel
 
 @{
-    ViewData["Title"] = "Επεξεργασία ομάδας";
+    ViewData["Title"] = $"Επεξεργασία Ομάδας: {Model.Name}";
     ViewData["Banner"] = Model.Name;
 }
 
 <div class="row justify-content-center">
     <div class="col-lg-10">
         <div class="card shadow-lg border-0 mt-2">
-            <div class="card-body p-5">
+            <div class="card-body p-4">
+                <form asp-action="Edit" asp-controller="Team" method="post" autocomplete="off" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                    <input type="hidden" asp-for="TeamId" />
+                    <input type="hidden" asp-for="Slug" />
 
-                <form asp-action="Edit" asp-controller="Team" asp-route-idOrSlug="@Model.Slug" enctype="multipart/form-data" autocomplete="off">
-                    <input type="hidden" asp-for="Name"/>
-                    <input type="hidden" asp-for="TeamId"/>
-                    <input type="hidden" asp-for="Slug"/>
+                    <div class="row align-items-end">
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label asp-for="YearFounded" class="form-label fw-semibold"></label>
+                                <input asp-for="YearFounded" class="form-control" type="number" pattern="\d{4}" maxlength="4" oninput="this.value = this.value.slice(0,4)" />
+                                <span asp-validation-for="YearFounded" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold">Κατάσταση</label>
+                                <div class="d-flex align-items-center" style="min-height: 38px;">
+                                    <div class="form-check form-switch me-4">
+                                        <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch" />
+                                        <label class="form-check-label" asp-for="IsActive"></label>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input asp-for="IsArchived" class="form-check-input" type="checkbox" role="switch" />
+                                        <label class="form-check-label" asp-for="IsArchived"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="mb-3">
+                                <label asp-for="Image" class="form-label fw-semibold"></label>
+                                <input asp-for="Image" class="form-control" type="file" accept="image/jpeg, image/png" />
+                                <span asp-validation-for="Image" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label fw-semibold"></label>
+                        <input asp-for="Description" type="hidden" />
+                        <div id="editor-container" style="height: 300px;">@Html.Raw(Model.Description)</div>
+                        <span asp-validation-for="Description" class="text-danger small"></span>
+                    </div>
 
                     <div class="row">
-                        <div class="col-lg-8">
-                            <div class="mb-5">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-4">
-                                            <label asp-for="YearFounded" class="form-label fw-semibold"></label>
-                                            <input asp-for="YearFounded" class="form-control form-control-lg" type="number" pattern="\d{4}" maxlength="4" oninput="this.value = this.value.slice(0,4)"/>
-                                            <span asp-validation-for="YearFounded" class="text-danger small"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="mb-4">
-                                            <div class="d-flex align-items-center gap-4" style="min-height: 58px;">
-                                                <div class="form-check form-switch">
-                                                    <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch"/>
-                                                    <label class="form-check-label" asp-for="IsActive"></label>
-                                                </div>
-                                                <div class="form-check form-switch">
-                                                    <input asp-for="IsArchived" class="form-check-input" type="checkbox" role="switch"/>
-                                                    <label class="form-check-label" asp-for="IsArchived"></label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-5">
-                                <div class="mb-4">
-                                    <label asp-for="Description" class="form-label fw-semibold"></label>
-                                    <textarea asp-for="Description" id="description-input" class="form-control" rows="4" style="display: none;"></textarea>
-                                    <div id="description-editor" style="height: 200px;"></div>
-                                    <span asp-validation-for="Description" class="text-danger small"></span>
-                                </div>
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-4">
-                                        <label asp-for="WebsiteLink" class="form-label fw-semibold"></label>
-                                        <input asp-for="WebsiteLink" class="form-control form-control-lg"/>
-                                        <span asp-validation-for="WebsiteLink" class="text-danger small"></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-4">
-                                        <label asp-for="FacebookLink" class="form-label fw-semibold"></label>
-                                        <input asp-for="FacebookLink" class="form-control form-control-lg"/>
-                                        <span asp-validation-for="FacebookLink" class="text-danger small"></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-4">
-                                        <label asp-for="InstagramLink" class="form-label fw-semibold"></label>
-                                        <input asp-for="InstagramLink" class="form-control form-control-lg"/>
-                                        <span asp-validation-for="InstagramLink" class="text-danger small"></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-4">
-                                        <label asp-for="YoutubeLink" class="form-label fw-semibold"></label>
-                                        <input asp-for="YoutubeLink" class="form-control form-control-lg"/>
-                                        <span asp-validation-for="YoutubeLink" class="text-danger small"></span>
-                                    </div>
-                                </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="FacebookLink" class="form-label fw-semibold"></label>
+                                <input asp-for="FacebookLink" class="form-control" />
+                                <span asp-validation-for="FacebookLink" class="text-danger small"></span>
                             </div>
                         </div>
-
-                        <div class="col-lg-4">
-                            <div class="position-sticky" style="top: 2rem;">
-                                <div class="mb-5">
-                                    <div class="mb-4">
-                                        <label asp-for="Image" class="form-label fw-semibold"></label>
-                                        <input type="file" name="image" class="form-control form-control-lg" accept="image/png, image/jpeg"/>
-                                    </div>
-                                </div>
-
-                                <div class="d-grid gap-3">
-                                    <button type="submit" class="btn btn-primary btn-lg">Αποθήκευση</button>
-                                    <a asp-action="Actions" asp-route-idOrSlug="@Model.Slug" class="btn btn-secondary btn-lg">Πίσω</a>
-                                </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="InstagramLink" class="form-label fw-semibold"></label>
+                                <input asp-for="InstagramLink" class="form-control" />
+                                <span asp-validation-for="InstagramLink" class="text-danger small"></span>
                             </div>
                         </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="YoutubeLink" class="form-label fw-semibold"></label>
+                                <input asp-for="YoutubeLink" class="form-control" />
+                                <span asp-validation-for="YoutubeLink" class="text-danger small"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label asp-for="WebsiteLink" class="form-label fw-semibold"></label>
+                                <input asp-for="WebsiteLink" class="form-control" />
+                                <span asp-validation-for="WebsiteLink" class="text-danger small"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 mt-4">
+                        <a asp-controller="Team" asp-action="Manage" class="btn btn-secondary">Πίσω</a>
+                        <button type="submit" class="btn btn-primary">Αποθήκευση</button>
                     </div>
                 </form>
             </div>
@@ -107,39 +98,30 @@
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial"/>
+    <partial name="_ValidationScriptsPartial" />
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const quill = new Quill('#description-editor', {
+        document.addEventListener("DOMContentLoaded", function () {
+            let quill = new Quill('#editor-container', {
                 theme: 'snow',
                 modules: {
                     toolbar: [
+                        [{ 'header': [1, 2, 3, false] }, { 'font': [] }],
                         ['bold', 'italic', 'underline', 'strike'],
-                        ['blockquote', 'code-block'],
-                        [{ 'header': 1 }, { 'header': 2 }],
-                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                        [{ 'indent': '-1' }, { 'indent': '+1' }],
-                        [{ 'direction': 'rtl' }],
-                        [{ 'size': ['small', false, 'large', 'huge'] }],
-                        [{ 'color': [] }, { 'background': [] }],
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+                        ['link', 'image', 'video'],
                         [{ 'align': [] }],
-                        ['clean'],
-                        ['link', 'image', 'video']
+                        ['clean']
                     ]
                 }
             });
 
-            const descriptionInput = document.getElementById("description-input");
-            const initialContent = descriptionInput.value;
-            if (initialContent) {
-                quill.root.innerHTML = initialContent;
-            }
+            let form = document.querySelector('form');
+            let descriptionInput = document.querySelector('input[name="Description"]');
 
-            const form = document.querySelector("form");
-            form.addEventListener("submit", function() {
-                descriptionInput.value = quill.root.innerHTML;
-                return true;
+            form.addEventListener('submit', function (e) {
+                let html = quill.root.innerHTML;
+                descriptionInput.value = (html === '<p><br></p>') ? '' : html;
             });
         });
     </script>

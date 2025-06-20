@@ -1,25 +1,32 @@
-﻿$(document).ready(function () {
-    $('span[data-valmsg-for]').each(function () {
-        if ($(this).text().trim().length > 0) {
-            const fieldName = $(this).attr('data-valmsg-for');
-            if (fieldName) {
-                $(`[name="${fieldName}"]`).addClass('is-invalid');
+﻿document.addEventListener('DOMContentLoaded', function() {
+    function updateValidationClasses() {
+        const allFields = document.querySelectorAll('input, select, textarea');
+        allFields.forEach(function(field) {
+            const fieldName = field.name || field.id;
+            if (!fieldName) {
+                return;
             }
-        }
+
+            const validationSpan = document.querySelector(`span[data-valmsg-for="${fieldName}"]`);
+            const hasError = validationSpan && validationSpan.textContent.trim() !== '';
+
+            if (hasError) {
+                field.classList.add('is-invalid');
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+    }
+
+    const observer = new MutationObserver(function(mutations) {
+        updateValidationClasses();
     });
 
-    let $form = $('form');
-
-    $form.on('input change', 'input, select', function() {
-        const form = $(this).closest('form');
-        form.find('.is-invalid').removeClass('is-invalid');
-        form.find('span[data-valmsg-for]').html('');
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        characterData: true
     });
 
-    $form.on('submit', function() {
-        if (!$(this).valid()) {
-            $('.input-validation-error').addClass('is-invalid');
-            return false;
-        }
-    });
+    updateValidationClasses();
 });

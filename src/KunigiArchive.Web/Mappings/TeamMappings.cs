@@ -2,6 +2,7 @@
 using KunigiArchive.Contracts.Team;
 using KunigiArchive.Web.ViewModels.Common;
 using KunigiArchive.Web.ViewModels.Team;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace KunigiArchive.Web.Mappings;
 
@@ -70,15 +71,34 @@ public static class TeamMappings
             viewModel.WebsiteLink);
     }
 
-    public static TeamManagerDetailsViewModel MapToTeamManagerDetailsViewModel(this TeamManagerDetailsResponse response)
+    public static TeamManagerEditViewModel MapToTeamManagerEditViewModel(this TeamManagerDetailsResponse response)
     {
-        return new TeamManagerDetailsViewModel
+        var userList = response.AvailableUsers
+            .Select(x => new SelectListItem
+            {
+                Value = x.ApplicationUserId.ToString(),
+                Text = x.Email
+            })
+            .ToList();
+        
+        userList.Insert(0, new SelectListItem
+        {
+            Value = "0",
+            Text = "-- Επιλέξτε χρήστη --",
+            Selected = true,
+            Disabled = true
+        });
+
+        return new TeamManagerEditViewModel
         {
             TeamId = response.TeamId,
-            TeamName =  response.TeamName,
-            Slug =   response.Slug,
-            CurrentManagers =   response.CurrentManagers.Select(x => x.MapToDetailsViewModel()).ToList(),
-            AvailableUsers =  response.AvailableUsers.Select(x => x.MapToDetailsViewModel()).ToList()
+            TeamName = response.TeamName,
+            Slug = response.Slug,
+            CurrentManagers = response.CurrentManagers
+                .Select(x => x.MapToDetailsViewModel())
+                .ToList(),
+            
+            AvailableUsers = new SelectList(userList, "Value", "Text")
         };
     }
 }

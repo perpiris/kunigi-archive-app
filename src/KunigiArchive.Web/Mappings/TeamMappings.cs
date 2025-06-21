@@ -36,6 +36,12 @@ public static class TeamMappings
             Slug = response.Slug,
             IsActive = response.IsActive,
             IsArchived = response.IsArchived,
+            YearFounded = response.YearFounded,
+            Description =  response.Description,
+            FacebookLink =  response.FacebookLink,
+            InstagramLink =  response.InstagramLink,
+            YoutubeLink =  response.YoutubeLink,
+            WebsiteLink =  response.WebsiteLink
         };
     }
     

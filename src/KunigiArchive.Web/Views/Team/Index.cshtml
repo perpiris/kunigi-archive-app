@@ -40,8 +40,12 @@
                 {
                     <img src="~/@Url.Content(team.LogoLink)" class="grid-item-image" alt="@team.Name">
                 }
-                <div class="grid-item-overlay">
-                    <h5 class="grid-item-title">@team.Name</h5>
+                <div class="gallery-item-info">
+                    <ul>
+                        <li class="gallery-item-name">
+                            <i class="bi bi-people-fill"></i> @team.Name
+                        </li>
+                    </ul>
                 </div>
             </a>
         }

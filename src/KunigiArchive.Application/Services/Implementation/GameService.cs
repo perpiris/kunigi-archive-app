@@ -76,16 +76,6 @@ public class GameService : IGameService
     
     public async Task<ServiceResult> CreateMasterGameAsync(MasterGameCreateRequest request, ModelStateDictionary modelState)
     {
-        if (!request.Year.HasValue)
-        {
-            modelState.AddModelError("Year", "Το πεδίο απαιτείται.");
-        }
-        
-        if (!request.Order.HasValue)
-        {
-            modelState.AddModelError("Order", "Το πεδίο απαιτείται.");
-        }
-        
         var yearExists = await _context.MasterGames.AnyAsync(x => x.Year == request.Year);
         if (yearExists)
         {
@@ -119,10 +109,9 @@ public class GameService : IGameService
 
         var newMasterGame = new MasterGame
         {
-            SubTitle = request.SubTitle.Trim(),
-            Title = $"{request.Order}ο Κυνήγι Θησαυρού",
-            Year = request.Year!.Value,
-            Order = request.Order!.Value,
+            SubTitle = $"{request.Order}ο Κυνήγι Θησαυρού",
+            Year = request.Year,
+            Order = request.Order,
             HostTeamId = request.HostTeamId,
             WinnerTeamId = request.WinnerTeamId
         };
@@ -131,27 +120,6 @@ public class GameService : IGameService
         await _context.SaveChangesAsync();
         
         return ServiceResult.Success();
-    }
-    
-    public async Task<(IEnumerable<SelectListItem> HostTeams, IEnumerable<SelectListItem> WinnerTeams, IEnumerable<SelectListItem> GameTypes)> GetCreateMasterGameSelectListsAsync()
-    {
-        var teams = await _context.Teams.OrderBy(x => x.Name).ToListAsync();
-        var gameTypes = await _context.GameTypes.OrderBy(x => x.Label).ToListAsync();
-
-        var teamSelectList = teams.Select(team => new SelectListItem
-        {
-            Value = team.TeamId.ToString(),
-            Text = team.Name
-        });
-
-        var gameTypeSelectList = gameTypes.Select(gameType => new SelectListItem
-        {
-            Value = gameType.GameTypeId.ToString(),
-            Text = gameType.Label
-        });
-
-        var selectListItems = teamSelectList.ToList();
-        return (selectListItems, selectListItems, gameTypeSelectList);
     }
 
     private static IQueryable<MasterGame> ApplySorting(IQueryable<MasterGame> query, string sortBy, bool ascending)

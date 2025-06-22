@@ -3,6 +3,7 @@ using KunigiArchive.Contracts.Common;
 using KunigiArchive.Contracts.Team;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace KunigiArchive.Application.Services;
 
@@ -14,7 +15,7 @@ public interface ITeamService
         bool includeArchived,
         string? searchTerm = null);
     
-    Task<IEnumerable<TeamDetailsResponse>> GetAllTeamsAsync();
+    Task<IEnumerable<SelectListItem>> GetTeamSelectListAsync();
 
     Task<ServiceResult> CreateTeamAsync(TeamCreateRequest request, ModelStateDictionary modelState);
     

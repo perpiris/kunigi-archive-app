@@ -10,6 +10,7 @@ namespace KunigiArchive.Web.Controllers;
 public class GameController : Controller
 {
     private readonly IGameService _gameService;
+    private readonly ITeamService _teamService;
 
     public GameController(IGameService gameService, ITeamService teamService)
     {
@@ -17,6 +18,7 @@ public class GameController : Controller
         ArgumentNullException.ThrowIfNull(teamService);
         
         _gameService = gameService;
+        _teamService = teamService;
     }
 
     public async Task<IActionResult> Index(
@@ -33,7 +35,7 @@ public class GameController : Controller
         ViewBag.SortBy = sortBy;
         ViewBag.Ascending = ascending;
 
-        var viewModel = data.MapToPaginatedViewModel();
+        var viewModel = data.MapToPaginatedMasterGameDetailsViewModel();
         return View(viewModel);
     }
 
@@ -53,7 +55,7 @@ public class GameController : Controller
         ViewBag.SortBy = sortBy;
         ViewBag.Ascending = ascending;
 
-        var viewModel = data.MapToPaginatedViewModel();
+        var viewModel = data.MapToPaginatedMasterGameDetailsViewModel();
         return View(viewModel);
     }
     
@@ -89,10 +91,9 @@ public class GameController : Controller
     
     private async Task PrepareMasterGameCreateViewModelAsync(MasterGameCreateViewModel viewModel)
     {
-        var (hostTeams, winnerTeams, gameTypes) = await _gameService.GetCreateMasterGameSelectListsAsync();
+        var teamSelectList = (await _teamService.GetTeamSelectListAsync()).ToList();
         
-        viewModel.HostTeamList = hostTeams;
-        viewModel.WinnerTeamList = winnerTeams;
-        viewModel.GameTypeList = gameTypes;
+        viewModel.HostTeamList = teamSelectList;
+        viewModel.WinnerTeamList = teamSelectList;
     }
 }

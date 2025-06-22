@@ -10,8 +10,7 @@ public interface IAccountService
     Task<PaginatedResponse<UserDetailsResponse>> GetPaginatedUsersAsync(
         int page,
         int pageSize,
-        string sortBy = "email",
-        bool ascending = true);
+        string? searchTerm = null);
     
     Task<ServiceResult> CreateUserAsync(UserCreateRequest request, ModelStateDictionary modelState);
 

@@ -29,7 +29,7 @@ public class TeamController : Controller
 
         ViewBag.SearchTerm = searchTerm;
 
-        var viewModel = data.MapToPaginatedViewModel();
+        var viewModel = data.MapToPaginatedTeamDetailsViewModel();
         return View(viewModel);
     }
 
@@ -45,7 +45,7 @@ public class TeamController : Controller
 
         ViewBag.SearchTerm = searchTerm;
 
-        var viewModel = data.MapToPaginatedViewModel();
+        var viewModel = data.MapToPaginatedTeamDetailsViewModel();
         return View(viewModel);
     }
     

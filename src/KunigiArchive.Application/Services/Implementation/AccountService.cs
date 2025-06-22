@@ -33,12 +33,14 @@ public class AccountService : IAccountService
     public async Task<PaginatedResponse<UserDetailsResponse>> GetPaginatedUsersAsync(
         int page,
         int pageSize,
-        string sortBy = "email",
-        bool ascending = true)
+        string? searchTerm = null)
     {
         var query = _userManager.Users.AsNoTracking();
 
-        query = ApplySorting(query, sortBy, ascending);
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(x => x.Email!.Contains(searchTerm));
+        }
 
         var totalCount = await query.CountAsync();
         var users = await query
@@ -210,14 +212,5 @@ public class AccountService : IAccountService
         }
 
         return ServiceResult.Success();
-    }
-
-    private static IQueryable<ApplicationUser> ApplySorting(IQueryable<ApplicationUser> query, string sortBy, bool ascending)
-    {
-        return sortBy.ToLower() switch
-        {
-            "email" => ascending ? query.OrderBy(x => x.Email) : query.OrderByDescending(x => x.Email),
-            _ => ascending ? query.OrderBy(x => x.Email) : query.OrderByDescending(x => x.Email)
-        };
     }
 }

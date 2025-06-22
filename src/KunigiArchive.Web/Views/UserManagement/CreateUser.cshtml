@@ -73,6 +73,14 @@
                 toggleTeamSelection();
             });
 
+            $('#SelectedTeamId').change(function() {
+                let teamSelect = $(this);
+                if (teamSelect.val() !== '') {
+                    teamSelect.removeClass('is-invalid');
+                    teamSelect.siblings('.text-danger').text('');
+                }
+            });
+
             $('#createUserForm').submit(function(event) {
                 let selectedRole = $('input[name="SelectedRole"]:checked').val();
                 let teamSelect = $('#SelectedTeamId');

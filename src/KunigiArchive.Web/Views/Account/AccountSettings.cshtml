@@ -20,9 +20,10 @@
                         <div class="tab-content" id="v-pills-tabContent">
                             <div class="tab-pane fade show active" id="v-pills-email" role="tabpanel" aria-labelledby="v-pills-email-tab">
                                 <form id="email-form" asp-action="ChangeEmail" method="post">
+                                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
                                     <div class="mb-3">
                                         <label asp-for="Email" class="form-label fw-semibold"></label>
-                                        <input asp-for="Email" class="form-control" autocomplete="email" aria-required="true" />
+                                        <input asp-for="Email" class="form-control" autocomplete="email" aria-required="true"/>
                                         <span asp-validation-for="Email" class="text-danger small"></span>
                                     </div>
                                     <div class="d-grid mt-4">
@@ -32,19 +33,20 @@
                             </div>
                             <div class="tab-pane fade" id="v-pills-password" role="tabpanel" aria-labelledby="v-pills-password-tab">
                                 <form id="password-form" asp-action="ChangePassword" method="post">
+                                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
                                     <div class="mb-3">
                                         <label asp-for="OldPassword" class="form-label fw-semibold"></label>
-                                        <input asp-for="OldPassword" class="form-control" type="password" placeholder="••••••••" />
+                                        <input asp-for="OldPassword" class="form-control" type="password" placeholder="••••••••"/>
                                         <span asp-validation-for="OldPassword" class="text-danger small"></span>
                                     </div>
                                     <div class="mb-3">
                                         <label asp-for="NewPassword" class="form-label fw-semibold"></label>
-                                        <input asp-for="NewPassword" class="form-control" type="password" placeholder="••••••••" />
+                                        <input asp-for="NewPassword" class="form-control" type="password" placeholder="••••••••"/>
                                         <span asp-validation-for="NewPassword" class="text-danger small"></span>
                                     </div>
                                     <div class="mb-3">
                                         <label asp-for="ConfirmNewPassword" class="form-label fw-semibold"></label>
-                                        <input asp-for="ConfirmNewPassword" class="form-control" type="password" placeholder="••••••••" />
+                                        <input asp-for="ConfirmNewPassword" class="form-control" type="password" placeholder="••••••••"/>
                                         <span asp-validation-for="ConfirmNewPassword" class="text-danger small"></span>
                                     </div>
                                     <div class="d-grid mt-4">

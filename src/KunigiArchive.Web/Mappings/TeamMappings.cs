@@ -45,7 +45,7 @@ public static class TeamMappings
         };
     }
     
-    public static PaginatedViewModel<TeamDetailsViewModel> MapToPaginatedViewModel(this PaginatedResponse<TeamDetailsResponse> paginatedResponse)
+    public static PaginatedViewModel<TeamDetailsViewModel> MapToPaginatedTeamDetailsViewModel(this PaginatedResponse<TeamDetailsResponse> paginatedResponse)
     {
         return new PaginatedViewModel<TeamDetailsViewModel>
         {
@@ -86,14 +86,6 @@ public static class TeamMappings
                 Text = x.Email
             })
             .ToList();
-        
-        userList.Insert(0, new SelectListItem
-        {
-            Value = "0",
-            Text = "-- Επιλέξτε χρήστη --",
-            Selected = true,
-            Disabled = true
-        });
 
         return new TeamManagerEditViewModel
         {

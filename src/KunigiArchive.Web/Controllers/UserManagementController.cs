@@ -28,9 +28,11 @@ public class UserManagementController : Controller
     public async Task<IActionResult> Manage(
         int pageNumber = 1, 
         int pageSize = 8,
-        string sortBy = "name")
+        string? searchTerm = null)
     {
-        var data = await _accountService.GetPaginatedUsersAsync(pageNumber, pageSize, sortBy);
+        var data = await _accountService.GetPaginatedUsersAsync(pageNumber, pageSize, searchTerm);
+        
+        ViewBag.SearchTerm = searchTerm;
         
         var viewModel = data.MapToPaginatedViewModel();
         return View(viewModel);
@@ -67,16 +69,14 @@ public class UserManagementController : Controller
 
     private async Task PrepareCreateUserViewModelAsync(UserCreateViewModel viewModel)
     {
-        var teamList = await _teamService.GetAllTeamsAsync();
+        var teamList = await _teamService.GetTeamSelectListAsync();
+        
         viewModel.RolesList = new List<SelectListItem>
         {
             new() { Value = "Admin", Text = "Admin" },
             new() { Value = "Manager", Text = "Manager" }
         };
-        viewModel.TeamList = teamList.Select(team => new SelectListItem
-        {
-            Value = team.TeamId.ToString(),
-            Text = team.Name
-        });
+
+        viewModel.TeamList = teamList;
     }
 }

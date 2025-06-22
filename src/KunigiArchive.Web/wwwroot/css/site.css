@@ -42,34 +42,26 @@ input[type=number] {
   gap: 1.5rem;
 }
 
-/* --- UPDATED STYLES START HERE --- */
-
-/* The grid container (the <a> tag) */
 .grid-item {
   position: relative;
-  display: flex; /* Use flexbox to center the image inside */
+  display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
   border-radius: 0.5rem;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  background-color: #ffffff; /* A clean background for any letterboxing */
+  background-color: #ffffff;
   cursor: pointer;
   color: white;
-  /* Use aspect-ratio for a consistent square container */
   aspect-ratio: 1 / 1;
 }
 
-/* The image itself */
 .grid-item-image {
-  /* Let the image scale down, but not exceed the container */
   max-width: 100%;
   max-height: 100%;
-  /* This is the key change: fit the whole image, do not crop */
   object-fit: contain;
 }
 
-/* The hover overlay */
 .gallery-item-info {
   display: flex;
   justify-content: center;
@@ -81,7 +73,7 @@ input[type=number] {
   background-color: rgba(0, 0, 0, 0.5);
   opacity: 0;
   transition: opacity 0.3s ease;
-  border-radius: 0.5rem; /* Ensure overlay respects the container's rounded corners */
+  border-radius: 0.5rem;
 }
 
 .grid-item:hover .gallery-item-info {

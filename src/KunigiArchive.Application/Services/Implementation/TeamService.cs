@@ -8,6 +8,7 @@ using KunigiArchive.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -72,10 +73,17 @@ public class TeamService : ITeamService
         };
     }
 
-    public async Task<IEnumerable<TeamDetailsResponse>> GetAllTeamsAsync()
+    public async Task<IEnumerable<SelectListItem>> GetTeamSelectListAsync()
     {
-        var items = await _context.Teams.ToListAsync();
-        return items.Select(x => x.MapToTeamDetailsResponse()).ToList();
+        var teams = await _context.Teams.OrderBy(x => x.Name).ToListAsync();
+
+        var teamSelectList = teams.Select(team => new SelectListItem
+        {
+            Value = team.TeamId.ToString(),
+            Text = team.Name
+        }).OrderBy(x => x.Text).ToList();
+        
+        return teamSelectList;
     }
 
     public async Task<ServiceResult> CreateTeamAsync(TeamCreateRequest request, ModelStateDictionary modelState)

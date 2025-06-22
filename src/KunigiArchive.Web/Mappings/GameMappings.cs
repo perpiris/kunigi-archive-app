@@ -26,7 +26,7 @@ public static class GameMappings
         };
     }
     
-    public static PaginatedViewModel<MasterGameDetailsViewModel> MapToPaginatedViewModel(this PaginatedResponse<MasterGameDetailsResponse> paginatedResponse)
+    public static PaginatedViewModel<MasterGameDetailsViewModel> MapToPaginatedMasterGameDetailsViewModel(this PaginatedResponse<MasterGameDetailsResponse> paginatedResponse)
     {
         return new PaginatedViewModel<MasterGameDetailsViewModel>
         {
@@ -41,12 +41,10 @@ public static class GameMappings
     {
         return new MasterGameCreateRequest
         {
-            SubTitle = viewModel.SubTitle,
-            Year = viewModel.Year,
-            Order = viewModel.Order,
+            Year = viewModel.Year!.Value,
+            Order = viewModel.Order!.Value,
             HostTeamId = viewModel.HostTeamId,
-            WinnerTeamId = viewModel.WinnerTeamId,
-            GameTypeIds = viewModel.SelectedGameTypeIds
+            WinnerTeamId = viewModel.WinnerTeamId
         };
     }
 }

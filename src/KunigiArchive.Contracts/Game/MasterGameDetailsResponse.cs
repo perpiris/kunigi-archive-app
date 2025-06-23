@@ -8,9 +8,9 @@ public class MasterGameDetailsResponse
     
     public required int Order { get; set; }
     
-    public required string Title { get; set; }
+    public required string OrderTitle { get; set; }
     
-    public string? SubTitle { get; set; }
+    public string? Title { get; set; }
     
     public string? Description { get; set; }
     

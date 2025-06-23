@@ -15,7 +15,7 @@ public static class GameMappings
             Year = response.Year,
             Order = response.Order,
             Title = response.Title,
-            SubTitle = response.SubTitle,
+            OrderTitle = response.OrderTitle,
             Description = response.Description,
             HostTeamId = response.HostTeamId,
             HostTeamName = response.HostTeamName,

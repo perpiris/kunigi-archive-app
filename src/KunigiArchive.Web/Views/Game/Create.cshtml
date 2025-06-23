@@ -16,7 +16,7 @@
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label asp-for="Year" class="form-label fw-semibold"></label>
-                                <input asp-for="Year" class="form-control" type="number" min="1900" max="2100" />
+                                <input asp-for="Year" class="form-control" type="number" min="1900" max="2100" pattern="\d{4}" maxlength="4" oninput="this.value = this.value.slice(0,4)" />
                                 <span asp-validation-for="Year" class="text-danger small"></span>
                             </div>
                         </div>

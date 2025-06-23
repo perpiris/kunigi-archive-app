@@ -8,9 +8,9 @@ public class MasterGameDetailsViewModel
     
     public required int Order { get; set; }
     
-    public required string Title { get; set; }
+    public required string OrderTitle { get; set; }
     
-    public string? SubTitle { get; set; }
+    public string? Title { get; set; }
     
     public string? Description { get; set; }
     
@@ -28,11 +28,11 @@ public class MasterGameDetailsViewModel
     
     public string GetCompleteTitle()
     {
-        var result = $"{Title} ({Year})";
+        var result = $"{OrderTitle} ({Year})";
         
-        if (!string.IsNullOrWhiteSpace(SubTitle))
+        if (!string.IsNullOrWhiteSpace(Title))
         {
-            result += $" - {SubTitle}";
+            result += $" - {Title}";
         }
         
         return result;

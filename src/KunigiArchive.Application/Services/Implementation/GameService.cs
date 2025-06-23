@@ -35,8 +35,6 @@ public class GameService : IGameService
         int page,
         int pageSize,
         bool includeArchived,
-        string sortBy = "year",
-        bool ascending = false,
         string? searchTerm = null)
     {
         var query = _context.MasterGames
@@ -52,15 +50,14 @@ public class GameService : IGameService
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
             query = query.Where(x => 
-                x.Title.Contains(searchTerm) ||
-                (x.SubTitle != null && x.SubTitle.Contains(searchTerm)) ||
+                (!string.IsNullOrWhiteSpace(x.Title) && x.Title.ToLower().Contains(searchTerm.ToLower())) ||
+                x.OrderTitle.Contains(searchTerm) ||
                 x.Year.ToString().Contains(searchTerm));
         }
 
-        query = ApplySorting(query, sortBy, ascending);
-
         var totalItems = await query.CountAsync();
         var items = await query
+            .OrderBy(x => x.Year)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
@@ -109,7 +106,7 @@ public class GameService : IGameService
 
         var newMasterGame = new MasterGame
         {
-            SubTitle = $"{request.Order}ο Κυνήγι Θησαυρού",
+            OrderTitle = $"{request.Order}ο Κυνήγι Θησαυρού",
             Year = request.Year,
             Order = request.Order,
             HostTeamId = request.HostTeamId,
@@ -120,16 +117,5 @@ public class GameService : IGameService
         await _context.SaveChangesAsync();
         
         return ServiceResult.Success();
-    }
-
-    private static IQueryable<MasterGame> ApplySorting(IQueryable<MasterGame> query, string sortBy, bool ascending)
-    {
-        return sortBy.ToLower() switch
-        {
-            "year" => ascending ? query.OrderBy(x => x.Year) : query.OrderByDescending(x => x.Year),
-            "order" => ascending ? query.OrderBy(x => x.Order) : query.OrderByDescending(x => x.Order),
-            "title" => ascending ? query.OrderBy(x => x.Title) : query.OrderByDescending(x => x.Title),
-            _ => ascending ? query.OrderBy(x => x.Year) : query.OrderByDescending(x => x.Year)
-        };
     }
 }

@@ -11,8 +11,6 @@ public interface IGameService
         int page,
         int pageSize,
         bool includeArchived,
-        string sortBy = "year",
-        bool ascending = false,
         string? searchTerm = null);
     
     Task<ServiceResult> CreateMasterGameAsync(MasterGameCreateRequest request, ModelStateDictionary modelState);

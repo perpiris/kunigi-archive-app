@@ -19,7 +19,7 @@ public class MasterGameConfiguration : IEntityTypeConfiguration<MasterGame>
         builder.Property(x => x.Description).HasMaxLength(4000);
         
         builder.Property(x => x.Title).HasMaxLength(500);
-        builder.Property(x => x.SubTitle).HasMaxLength(500);
+        builder.Property(x => x.OrderTitle).IsRequired().HasMaxLength(500);
         
         builder.Property(x => x.LogoLink).HasMaxLength(500);
 

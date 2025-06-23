@@ -24,16 +24,12 @@ public class GameController : Controller
     public async Task<IActionResult> Index(
         int pageNumber = 1, 
         int pageSize = 8, 
-        string sortBy = "year",
-        bool ascending = false,
         string? searchTerm = null)
     {
         var data = 
-            await _gameService.GetPaginatedMasterGamesAsync(pageNumber, pageSize, false, sortBy, ascending, searchTerm);
+            await _gameService.GetPaginatedMasterGamesAsync(pageNumber, pageSize, false, searchTerm);
 
         ViewBag.SearchTerm = searchTerm;
-        ViewBag.SortBy = sortBy;
-        ViewBag.Ascending = ascending;
 
         var viewModel = data.MapToPaginatedMasterGameDetailsViewModel();
         return View(viewModel);
@@ -44,16 +40,12 @@ public class GameController : Controller
     public async Task<IActionResult> Manage(
         int pageNumber = 1, 
         int pageSize = 8, 
-        string sortBy = "year",
-        bool ascending = false,
         string? searchTerm = null)
     {
         var data = 
-            await _gameService.GetPaginatedMasterGamesAsync(pageNumber, pageSize, true, sortBy, ascending, searchTerm);
+            await _gameService.GetPaginatedMasterGamesAsync(pageNumber, pageSize, true, searchTerm);
 
         ViewBag.SearchTerm = searchTerm;
-        ViewBag.SortBy = sortBy;
-        ViewBag.Ascending = ascending;
 
         var viewModel = data.MapToPaginatedMasterGameDetailsViewModel();
         return View(viewModel);

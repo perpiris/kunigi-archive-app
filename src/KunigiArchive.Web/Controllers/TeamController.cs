@@ -166,7 +166,7 @@ public class TeamController : Controller
         return RedirectToAction(nameof(Actions), new { idOrSlug });
     }
     
-    [HttpGet("{idOrSlug}/edit-managers")]
+    [HttpGet("{idOrSlug}/managers")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> Managers(string idOrSlug)
     {
@@ -184,7 +184,7 @@ public class TeamController : Controller
             return RedirectToAction("NotFound", "Home");
         }
 
-        var viewModel = teamWithManagers.MapToTeamManagerEditViewModel();
+        var viewModel = teamWithManagers.MapToTeamManagerDetailsViewModel();
         return View(viewModel);
     }
 
@@ -226,5 +226,27 @@ public class TeamController : Controller
         }
 
         return RedirectToAction("Managers", new { idOrSlug });
+    }
+    
+    [HttpGet("{idOrSlug}/media")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> Media(string idOrSlug)
+    {
+        var data = await _teamService.GetTeamByIdOrSlugAsync(idOrSlug, false);
+        if (data is null)
+        {
+            TempData["error-alert"] = "Η ομάδα δεν βρέθηκε.";
+            return RedirectToAction("NotFound", "Home");
+        }
+
+        var teamWithMedia = await _teamService.GetTeamWithMediaAsync(idOrSlug);
+        if (teamWithMedia is null)
+        {
+            TempData["error-alert"] = "Η ομάδα δεν βρέθηκε.";
+            return RedirectToAction("NotFound", "Home");
+        }
+
+        var viewModel = teamWithMedia.MapToTeamMediaDetailsViewModel();
+        return View(viewModel);
     }
 }

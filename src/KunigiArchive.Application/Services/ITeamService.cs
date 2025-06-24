@@ -33,4 +33,6 @@ public interface ITeamService
     Task<ServiceResult> AddTeamManagerAsync(string idOrSlug, long applicationUserId);
 
     Task<ServiceResult> RemoveTeamManagerAsync(string idOrSlug, long applicationUserId);
+    
+    Task<TeamMediaDetailsResponse?> GetTeamWithMediaAsync(string idOrSlug);
 }

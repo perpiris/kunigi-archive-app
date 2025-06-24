@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace KunigiArchive.Web.ViewModels.Team;
 
-public class TeamManagerEditViewModel
+public class TeamManagerDetailsViewModel
 {
     public long TeamId { get; set; }
     

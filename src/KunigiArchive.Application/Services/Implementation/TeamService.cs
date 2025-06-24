@@ -314,11 +314,7 @@ public class TeamService : ITeamService
             var isInRole = await _userManager.IsInRoleAsync(user, "Manager");
             if (!isInRole)
             {
-                var roleResult = await _userManager.AddToRoleAsync(user, "Manager");
-                if (!roleResult.Succeeded)
-                {
-                    _logger.LogWarning("Failed to add Manager role to user {UserId} when adding to team {TeamId}. Errors: {Errors}", applicationUserId, team.TeamId, string.Join(", ", roleResult.Errors.Select(e => e.Description)));
-                }
+                await _userManager.AddToRoleAsync(user, "Manager");
             }
         }
 
@@ -364,24 +360,16 @@ public class TeamService : ITeamService
                 
                 if (!hasOtherTeams)
                 {
-                    var roleResult = await _userManager.RemoveFromRoleAsync(user, "Manager");
-                    if (!roleResult.Succeeded)
-                    {
-                        _logger.LogWarning("Failed to remove Manager role from user {UserId} when removing from team {TeamId}. Errors: {Errors}", applicationUserId, team.TeamId, string.Join(", ", roleResult.Errors.Select(e => e.Description)));
-                    }
+                    await _userManager.RemoveFromRoleAsync(user, "Manager");
                 }
             }
         }
 
         return ServiceResult.Success();
     }
-    
-    private static IQueryable<Team> ApplySorting(IQueryable<Team> query, string sortBy, bool ascending)
+
+    public async Task<TeamMediaDetailsResponse?> GetTeamWithMediaAsync(string idOrSlug)
     {
-        return sortBy.ToLower() switch
-        {
-            "name" => ascending ? query.OrderBy(x => x.Name) : query.OrderByDescending(x => x.Name),
-            _ => ascending ? query.OrderBy(x => x.Name) : query.OrderByDescending(x => x.Name)
-        };
+        throw new NotImplementedException();
     }
 }

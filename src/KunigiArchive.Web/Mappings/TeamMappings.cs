@@ -77,7 +77,7 @@ public static class TeamMappings
             viewModel.WebsiteLink);
     }
 
-    public static TeamManagerEditViewModel MapToTeamManagerEditViewModel(this TeamManagerDetailsResponse response)
+    public static TeamManagerDetailsViewModel MapToTeamManagerDetailsViewModel(this TeamManagerDetailsResponse response)
     {
         var userList = response.AvailableUsers
             .Select(x => new SelectListItem
@@ -87,7 +87,7 @@ public static class TeamMappings
             })
             .ToList();
 
-        return new TeamManagerEditViewModel
+        return new TeamManagerDetailsViewModel
         {
             TeamId = response.TeamId,
             TeamName = response.TeamName,
@@ -95,8 +95,18 @@ public static class TeamMappings
             CurrentManagers = response.CurrentManagers
                 .Select(x => x.MapToDetailsViewModel())
                 .ToList(),
-            
             AvailableUsers = new SelectList(userList, "Value", "Text")
+        };
+    }
+
+    public static TeamMediaDetailsViewModel MapToTeamMediaDetailsViewModel(this TeamMediaDetailsResponse response)
+    {
+        return new TeamMediaDetailsViewModel
+        {
+            TeamId = response.TeamId,
+            Slug =  response.Slug,
+            TeamName =  response.TeamName,
+            MediaFiles = response.MediaFiles.Select(x => x.MapToMediaFileViewModel()).ToList()
         };
     }
 }

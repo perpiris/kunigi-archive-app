@@ -168,7 +168,7 @@ public class TeamController : Controller
     
     [HttpGet("{idOrSlug}/edit-managers")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> EditManagers(string idOrSlug)
+    public async Task<IActionResult> Managers(string idOrSlug)
     {
         var data = await _teamService.GetTeamByIdOrSlugAsync(idOrSlug, false);
         if (data is null)
@@ -205,7 +205,7 @@ public class TeamController : Controller
             TempData["success-alert"] = "Ο διαχειριστής προστέθηκε με επιτυχία.";
         }
 
-        return RedirectToAction("EditManagers", new { idOrSlug });
+        return RedirectToAction("Managers", new { idOrSlug });
     }
 
     [HttpPost("{idOrSlug}/remove-manager")]
@@ -225,6 +225,6 @@ public class TeamController : Controller
             TempData["success-alert"] = "Ο διαχειριστής αφαιρέθηκε με επιτυχία.";
         }
 
-        return RedirectToAction("EditManagers", new { idOrSlug });
+        return RedirectToAction("Managers", new { idOrSlug });
     }
 }
